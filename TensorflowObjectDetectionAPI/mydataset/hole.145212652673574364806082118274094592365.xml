@@ -1,0 +1,25 @@
+<annotation>
+	<folder>mydataset</folder>
+	<filename>240995377866808826537276174462837509093</filename>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>290</width>
+		<height>50</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>hole</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>10</xmin>
+			<ymin>0</ymin>
+			<xmax>20</xmax>
+			<ymax>20</ymax>
+		</bndbox>
+	</object>
+</annotation>
