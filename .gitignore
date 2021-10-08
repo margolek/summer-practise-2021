@@ -12,3 +12,6 @@ Count_circles_photo.ipynb
 Image_masking.ipynb
 ROI.ipynb
 VideoCapture.ipynb
+Load_trained_model.ipynb
+Training_and_Detection.ipynb
+object_detection_camera_blueprint.ipynb
