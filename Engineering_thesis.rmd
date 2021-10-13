@@ -1,7 +1,7 @@
 ---
 title: "System for detecting product defects from the production line based on digital image processing using neural networks "
 author: "Slawomir Serafin"
-date: "October 7, 2021"
+date: "October 13, 2021"
 output: pdf_document
 ---
 
