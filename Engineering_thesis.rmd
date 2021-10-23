@@ -1,8 +1,33 @@
 ---
 title: "System for detecting product defects from the production line based on digital image processing using neural networks "
 author: "Slawomir Serafin"
-date: "October 13, 2021"
+date: "`r Sys.Date()`"
 output: pdf_document
 ---
 
-## New first headline
+
+
+\newpage
+\tableofcontents
+\newpage
+
+# Wprowadzenie
+
+## Cel projektu
+Celem projektu jest wykonanie programu, który będzie wykorzystywał cyfrowe przetwarzanie obrazów w celu automatyzacji procesów produkcyjnych
+w zakładzie przemysłowym specjalizującym się w branży meblarskiej. Dodatkowo w celu zwiększenia precyzji zostanie wykorzystana sieć neuronowa
+z wykorzystaniem biblioteki TensorFlow.  
+
+## Założenia przedsięwzięcia oraz zdefiniowanie problemu
+![Zdefiniowanie problemu projektowego](./DATA/Images_to_Thesis/zdefiniowanie_problemu.jpg){width=70%}
+
+## Oczekiwany rezultat
+
+## Wykorzystane narzędzia
+
+# Protokół RTSP
+![Wykorzystanie protokołu RTSP jako źródło informacji o produkcie](./DATA/Images_to_Thesis/rtsp.jpg)
+
+# Cyfrowe przetwarzanie obrazów z wykorzystaniem biblioteki OpenCV
+
+# Zastosowanie sieci neuronowej z wykorzystaniem środowiska TensorFlow
