@@ -162,7 +162,42 @@ py-opencv                 3.4.2            py36hc319ecb_0
 
 ![Klasyfikacja obrazów](./DATA/Images_to_Thesis/obraz.jpg){width="100%"}
 
+Ze względu na matematyczną interpretację obrazu zostanie wprowadzona podstawowa klasyfikacja, która będzie odnośnikiem również do dalszej części pracy. W celu odwzorowania rzeczywistości wykorzystuje się wielowymiarowe struktury danych. Zależnie od źródła mogą się one nazywać *macierzami*, *tablicami*, *tensorami* bądź zwyczajnie *wektorami wielowymiarowymi*. Najprostrszym przypadkiem jest konstrukcja macierzy, która posiada pewną określoną liczbę wierszy oraz kolumn a jej strukturę możemy naszkicować na kartce papieru. Zdjęcie może przykazywać informacje tylko i wyłącznie, kiedy jego wnętrze wypełnione jest danymi. Wszystkie analizowane obiekty zostaną przedstawione w oparciu o rozszerzenie graficzne formatu **jpg**, które umożliwia wykorzystanie *8-bitowej* głębi kolorów. Oznacza to, że wnętrze macierzy może być wypełnione liczbami naturalnymi z przedziału od 0 do 255. Często w kolejnych etapach pracy wykonuje się operacje normalizowania tj. przeskalowania wszystkich liczb znajdujących się we wcześniej wspopminanym zakresie na przedział od 0 do 1. Takie podejście umożliwia przedstawienie zdjęcia tylko i wyłącznie w odcieniu jednego koloru. W sytuacji gdy jest potrzeba zastosowania formatu wilokolorowego musimy rozszerzyć istniejącą warstwę o dwie dodatkowe i wykonać na każdej z nich kolejno mapowanie na kolor czerowny (R), zielony (G) oraz niebieski (B). Jeżeli pojedyńcza wartość piksele może znajdować się w zakresie od 0 do 255 oraz uwzględnimy liczbę kanałów to otrzymujemy paletę barw zdolną do odwzorowania niemal *17 mln* kolorów. Ławtwo jednak zauważyć, że zdjęcie wielokolorowe zwiększa ilość dostarczanych informacji trzykrotnie co może nie być pożądane pod kątem wydajnościowym. Tutaj decyzja o formacie leży tylko i wyłącznie po stronie użytkownika, który musi określić czy identyfikacja  kolorów pomoże mu w rozwiązaniu problemu czy jest wyłącznie dodatkowymi, zbędnymi informacjami. Analizując zdjęcie monochromatyczne, możemy przedstawić je w odcieniu jednego koloru (najczęściej głębia koloru szarego) lub zbinearyzować tj. uprościć obraz tylko i wyłącznie do jego warunków brzegowych (brak informacji lub jej obecność). Ta własność okaże się bardzo przydatna w kolejnych etapach przetwarzania.
+
+![Obraz w różnych odcieniach szarości](./DATA/Images_to_Thesis/grayscale.jpg){width="50%"}
+
+\newpage
+
+![Zdjęcie w postaci binarnej](./DATA/Images_to_Thesis/binar.png){width="50%"}
+
+![Sposób przedstawienia zdjęcia w formacie kolorowym](./DATA/Images_to_Thesis/RGB_channels.jpg){width="50%"}
+
+\newpage
+
+## Przetwarzanie obrazu
+
+### Oczekiwany rezultat
+
+![Obiekt do przetworzenia](./DATA/Images_to_Thesis/input_photo.jpg){width="50%"}
+
+![Efekt działania programu](./DATA/Images_to_Thesis/expected_result.jpg){width="50%"}
 
 
 \newpage
+
+### Schemat blokowy toru przetwarzania
+
+\newpage
+
+### Grayscale
+
+### Gaussian Blur
+
+### Canny Edge Extraction
+
+### Dilation
+
+### Threshold
+
+
 
