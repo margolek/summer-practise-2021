@@ -3,6 +3,7 @@ title: 'System for detecting product defects from the production line based on d
   image processing using neural networks '
 author: "Slawomir Serafin"
 date: "`r Sys.Date()`"
+bibliography: references.bib
 output:
   pdf_document: default
   html_document:
@@ -191,13 +192,70 @@ Ze względu na matematyczną interpretację obrazu zostanie wprowadzona podstawo
 
 ### Grayscale
 
-### Gaussian Blur
+Zdjęcie dostarczone prze kamerę w trybie domyślnym zawiera trzy kanały danych (R,G,B). W celu usprawnienia wykonywanych operacji oraz możemy wykonać transformacji na obraz w odcieniach szarości. Matematyczną implementację opisuje równanie (1). Korzystając z pakietu OpenCV operację tą możemy wykonać w oparciu o dwa dostarczone argumenty. Pierwszym z nich jest obraz, natomiast w drugim członie funkcji podanie zostany sposób konwersji, w tym przypadku z kanału kolorowego na odcienie szarości.
+
+```python
+gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+```
+
+\begin{equation}
+y = 0.299R + 0.587G + 0.114B
+\end{equation}
+
+[@ColorConversion]
+
+
+### Blurring
+
+Kolejnym krokiem jest usunięcie ze zdjęcia w jak największym stopniu, zakłóceń, które mogą w sposób inwazyjny zaburzać dalszą pracę. W tym celu wykonywana jest operacja wygładzania zdjęcia. Innym określeniem stosowanym do tego typu zabiegów jest również rozmazywanie. W ujęciu matematycznym możemy zdefiniować to jako proces filtracji. Wykonanie takiej operacji zostało przedstawione w postaci poniższego równania [@Blurring2].
+
+\begin{equation}
+g(i, j)=\sum_{k, l} f(i+k, j+l) h(k, l)
+\end{equation}
+
+Wyjściowy wektor *g(i,j)* otrzymywany jest poprzez sumę wartości pikseli w uwzględnieniem wag otrzymywanych przy zastosowaniu jądra. W równaniu został ono przedstawione w postaci *h(k,l)*. Filtr ten można zwizuwalizować przy pomocy okna zawierającego wartości współczynników. Możemy wyróżnić kilka roadzajów filtracji. Najprostszym podejściem jest utworzenie tablicy z wartości średnich w obrębie danego jądra [@Szeliski1]. Poniższa tożsamość ilustruje podstawową implementację.
+
+\begin{equation}
+K=\frac{1}{K_{\text {width }} \cdot K_{\text {height }}} \cdot\left[\begin{array}{ccccc}
+1 & 1 & 1 & \ldots & 1 \\
+1 & 1 & 1 & \ldots & 1 \\
+. & . & . & \ldots & 1 \\
+. & . & . & \ldots & 1 \\
+1 & 1 & 1 & \ldots & 1
+\end{array}\right]
+\end{equation}
+
+
+
+\newpage
+
+W przetwarzaniu obrazów najczęściej wykorzystujemy jednak giltrację w oparciu o okno Gaussa. Warto jednak w tym momencie wzrócić uwagę, że rozwiązanie nie jest najkorzystniejsze pod wzgledem wydajności, zatem jeżeli w kolejnych krokach zaobserwujemy spadek wydajności zmiana rodzaju okna może okazać się kluczową decyzją. Z racji, że obiekt na którym będziemy wykonywać operacje będzie posiadał dwa wymiary, poniższe równanie prezentuje opisywaną funkcje, natomiast poniżej widoczna jest jej graficzna interpretacja.
+
+\begin{equation}
+G_{0}(x, y)=A e^{\frac{-\left(x-\mu_{x}\right)^{2}}{2 \sigma_{x}^{2}}+\frac{-\left(y-\mu_{y}\right)^{2}}{2 \sigma_{y}^{2}}}
+\end{equation}
+
+
+![Kształt funkcji gaussa dla dwóch zmiennych parametrów wraz ze współczynnikami dla wymiarów okna 3x3 [@Blurring] ](./DATA/Images_to_Thesis/gauss_2_variable.jpg){width="100%"}
+
+
+Implementacja przy użyciu dostarczeniu do funkcji trzech argumentów. Pierwszym z nich jest obraz powstawy w wyniku poprzedniej operacji. Kolejno definujemy rozmiar jądra w postaci listy statycznej. Opcojalnym krokiem jest zdefiniowanie stanu, tak aby operacja była wykonywana na wartościach znormalizowanych. Domyślnie funkcja przybiera wartość *false* 
+
+```python
+img_blur = cv2.GaussianBlur(gray,(size,size),1)
+```
+
+\newpage
 
 ### Canny Edge Extraction
 
 ### Dilation
 
 ### Threshold
+
+\newpage
+
+## Bibliografia
 
 
 
