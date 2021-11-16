@@ -247,14 +247,65 @@ img_blur = cv2.GaussianBlur(gray,(size,size),1)
 
 \newpage
 
-### Canny Edge Extraction
+### Canny Edge Detection
 
-### Dilation
+Canny Edge Detection to jest z najbardziej rozpowszechnionych algorytmów służących do wyseparowania krawędzi z obrazu. Rozwiązanie zaproponował australijski infomatyk John F. Canny w roku 1986. Jest to algorytm wieloetapowy, który wymaga kilku niezalężnie związanych ze sobą operacji. Pierwszą z nich jest redukcja szumów, która została wykonana w poprzednim punkcie poprzez operację rozmazywania. Kolejnym krokiem jest przeprowadzenie obliczeń gradientowych wdluż osi x oraz y. W tym celu wykorzystywany jest algorytm Sobela. Matemetycznie wykonaną operacje przedstawia poniższy wzór.
 
-### Threshold
+\begin{equation}
+{ EdgeGradient }(G)=\sqrt{G_{x}^{2}+G_{y}^{2}}
+\end{equation}
+
+\begin{equation}
+{ Angle }(\theta)=\tan ^{-1}\left(\frac{G_{y}}{G_{x}}\right)
+\end{equation}
+
+Powyższą operację można przedstawić w sposób graficzny co prezentuje poniższa ilustracja. Składa się ona z trzech osobnych elementów. Na pierwszej grafice widnieje potencjalny element do wykrycia. Przeprowadzamy przez niego linię odniesienia, która będzie referencją w kolejnych krokach. Następnie liczony jest poziom nasycenia kolorów (grafika 2). Końcowym etapem są obliczenia gradientowe. W zależnosci od wyboru poziomu wyzwalania otrzymujemy maksymalną oraz minimalną wartość pochodnej bo wskazuje, że wzdłuż badanego obszaru znajduje się obiekt, który chcieliśmy wykryć.
+
+![Obliczenia gradientowe](./DATA/Images_to_Thesis/gradient_edges.jpg){width="100%"}
 
 \newpage
 
+### Dilation
+
+Dilation jest operacją, która ma na celu zwiększenie objętości wyseparowanych krawędzi. W tym przypadku jest to niezbędny proces gdyż zdjęcie jest o stosunkowo niewielkiej rozdzielczości co przekłada się na niewielką powierzchnię krawędzi. Dodatkowo taki proces jest potrzebny, ponieważ kontury uzyskane w wyniku poprzedniej operacji często nie tworzą obszarów o strukturze zamkniętej, co w dalszym procesie uniemożliwia zastosowanie filtrowania w oparciu o wymieniony parametr. Dodatkowo potrzeba określić dwa parametry zastosowanej funkcji, pierwszym z nich jest wejściowy wektor macierzy w postaci binarnej natomiast drugim rozmir jądra. W tym momencie należy mieć na uwadze, że czym większy jego wymiar tym krawędzie bardziej zyskają na objętości. Należy jednak dobierać uważnie jago wartość, ponieważ można doprowadzić do sytuacji gdzie kontury zaczną tworzyć jeden większy co nie jest zjawiskiem porządanym. Poniższe równanie opisuje zastosowaną zależność.
+
+\begin{equation}
+\operatorname{dst}(x, y)=\max _{\left(x^{\prime}, y^{\prime}\right): \text { element }\left(x^{\prime}, y^{\prime}\right) \neq 0} \operatorname{src}\left(x+x^{\prime}, y+y^{\prime}\right)
+\end{equation}
+
+Z praktycznego punktu widzenia oznacza to, że jeżeli przynajmniej jeden element oznaczający wartość *1* z macierzy wejściowej pokryje się z elementem *1* zastosowanego jądra na wyjściu otrzymujemy *1*. Następnie operację powtarzamy przesuwając wektor jądra w taki sposób aby przejść przez całą macierz wyjściową. Modyfikować możemy równieżliczbę iteracji.  
+
+![Przykładowy przebieg procesu](./DATA/Images_to_Thesis/dilation.jpg){width="100%"}
+
+
+```python
+#Dilation process
+dsize = cv2.getTrackbarPos("Dilation_kernel","Parameters")
+imgDil = cv2.dilate(edges,np.ones((dsize,dsize)),iterations=1)
+
+```
+\newpage
+
+### Threshold
+
+Kolejnym etapem jest **Thresholding**, który polega na ustaleniu wartości granicznych dla których zdjęcie powinno zostać wyprogowane. Proces ten można nazwać również binearyzacją. Przetwarzanie polega na aplikacji dla kazdego piksela z obrazu funkcji, która w zależności od wartości koloru piksela ustala jego wartość na 0 (kolor czarny) lub 255 (kolor biały). Należy jednak pamiętać że musimy dysponować obrazem przedstawionym w formacie róznych odcieni szarości, aby proces został przeprowadzony poprawnie. Poniżej interpretacja matematyczna oraz przykład użycia funkcji na której wejście należy podać cztery argumenty. Pierwszym z nich jest macierz obrazu. Kolejne dwa ostalają parametry progrowania. Jeżeli wartość numeryczna piksela będzie większa niż drugi argument, na wyjściu otrzymamy wartość 255 w przeciwnym wypadku będzie to 0. W zależności od zapotrzebowania możemy zastosować różny algorytm, poniższa grafika prezentuje 5 podstawowych, jednak naważniejsze z nich w kontekście projektu to *BINARY* oraz *BINARY_INV*.
+
+\begin{equation}
+\operatorname{dst}(x, y)= \begin{cases}0 & \text { if } \operatorname{src}(x, y)>\text { thresh } \\ \text { maxval } & \text { otherwise }\end{cases}
+\end{equation}
+
+
+
+```python
+#Color inverse
+ret,thresh1 = cv2.threshold(imgDil,100,255,cv2.THRESH_BINARY_INV)
+
+```
+
+![Podstawowe algorytmy progowania](./DATA/Images_to_Thesis/algorytmy_progowania.jpg){width="70%"}
+
+
+\newpage
 ## Bibliografia
 
 
