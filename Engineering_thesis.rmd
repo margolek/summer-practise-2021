@@ -188,6 +188,8 @@ Ze względu na matematyczną interpretację obrazu zostanie wprowadzona podstawo
 
 ### Schemat blokowy toru przetwarzania
 
+![Schemat blokowy przetwarzania obrazu](./DATA/Images_to_Thesis/block_schema.jpg){height="70%"}
+
 \newpage
 
 ### Grayscale
@@ -304,6 +306,137 @@ ret,thresh1 = cv2.threshold(imgDil,100,255,cv2.THRESH_BINARY_INV)
 
 ![Podstawowe algorytmy progowania](./DATA/Images_to_Thesis/algorytmy_progowania.jpg){width="70%"}
 
+\newpage
+
+### Wyseparowanie konturów
+
+Kontury można przedstawić w prosty sposób jako krzywą łączącą punkty wzdłuż granicy o takim samym kolorze lub intensywności. Przy ich pomocy można w dość prosty sposób analizować wykrywanie obiektów lub ich rozpoznawanie. W celu zapewnienia najlepszych efektów na wejście algorytmu podaje się najczęsciej zdjęcie w postaci binarnej, co zostało wykonane w poprzednich punktach. Do implementacji służy funkcja *cv2.findContours()* do której zależy dostarczyć trzy argumenty. Pierwszym z nich jest zbinearyzowany obraz, następnie określa się algorytm separacji krawędzi a jako trzecią wartość podaje się metodę aproksymacji. Zastosowany algortym *RETR_CCOMP* charakteryzuje się zwracaniem krawędzi w sposób hierarchiczny tworząc dwa poziomy dla konturów zewnętrznych oraz wewnętrznych. Pierwszą warstwę tworzy obramowanie całego wykrytego elementu. Wszystkie kontury znajdujące się wewnątrz niego stanowią jedną grupę i zostają sklasyfikowane jako drugi stopień drabiny zależności. *CHAIN_APPROX_SIMPLE* służy natomiast do zwrócenia punktów granicznych krawędzi, dla których następuje zmiana w kierunku poziomym, pionowym oraz po przekątnej. Przykładowo dla wykrytego prostokąta byłyby to wyłącznie cztery punkty. Tak wykryte krawędzie są następnie filtrowane za pomocą powierzchni, która jest zdefiniowane przez użytkownika przy pomocy trackbara. Jeżeli zostaną spełnione warunki tj. wykrywany kontrur znajduje się we wnętrzu zewnętrznego oraz jego powierzhnia jest mniejsca od zdefiniowanej wartości granicznej następuje graficzna wizualizacja procesu w oparciu o metodę *cv2.drawContours()*. Następnie wykonywany jest dodatkowy proces, który umożliwi identyfikacje grup obiektów. Do tego celu następuje zaproksymowanie konturu przy pomocy krzywej a następnie wpisanie jest w równanie prostokąta. Mając te dane można wyznaczyć środek ciężkości figury w postaci pojedynczego punktu zawierającego informacje o jego położeniu. Koncowym etapem jest zwrócenie tych wartości w postacji posortowanej listy. Poniższa grafika prezentuje w uproszczony sposób działanie algorytmu. Środki ciężkości zostały przedstawione w postaci czerwonych punktów.
+
+
+
+![Wysyperowanie konturów oraz wyznaczenie środków ciężkości](./DATA/Images_to_Thesis/circle_centers.jpg){width="40%"}
+
+\newpage
+
+```python
+def getContours(img,imgContour,ymin=200,ymax=375):
+    contours,hierarchy = cv2.findContours(
+      img,cv2.RETR_CCOMP,
+      cv2.CHAIN_APPROX_SIMPLE)[-2:]
+    rectangle_center = []
+    for i in range(len(contours)):
+        #Filter using area function
+        area = cv2.contourArea(contours[i])
+        areaMax = cv2.getTrackbarPos("Area","Parameters")
+        # If third column value is NOT equal to -1 than its internal
+        if hierarchy[0][i][3] != -1 and area < areaMax:
+            # Draw the Contour
+            cv2.drawContours(imgContour, contours, i, (255,0,255), 2)
+            peri = cv2.arcLength(contours[i],True)
+            approx = cv2.approxPolyDP(contours[i],0.02*peri,True)
+            x,y,w,h = cv2.boundingRect(approx)
+            cv2.rectangle(imgContour,(x,y),(x+w,y+h),(0,255,0),1)
+            rectangle_center.append(x+w/2)
+    return sorted(rectangle_center)
+
+```
+
+### Podział na grupy oraz wyznaczenie ROI
+Podstawą dalszej analizy jest zdefiniowanie obszaru, w którym będą się znajdować poszukiwane elementy. Można w łatwy sposób zauważyć że znajduje się on wewnątrz dwóch group otworów zlokalizowanych na krawędziach całego obiektu. Trzeba jednak wziąć pod uwagę, że produkt nigdy nie będzie znajdował się równolegle do obiektywu kamery co skutkuje koniecznością zastosowania dodatkowych parametrów w celach identyfikacji. Znając współrzędne środków otworów, które zostały zwrócone przez poprzednią funkcję można zaproksymować grupę przy pomocy prostej (kolor czerwony), która będzie dynamicznie zmieniała swoje parametry wraz z poruszającym się obiektem na linii produkcynjej.
+Poniższe grafiki przedstawiają opisany proces zarówno w postaci uproszczonej jak i rzeczywistej.
+
+\newpage
+
+![Wyznaczenie grup w postaci uproszczonej](./DATA/Images_to_Thesis/groups1.jpg){width="40%"}
+
+![Wyznaczenie grup w postaci rzeczywistej](./DATA/Images_to_Thesis/groups2.jpg){width="60%"}
+
+
+\newpage
+
+Zgodnie z powyższymi grafikami grupa może być utworzona tylko i wyłącznie wtedy gdy zostaną spełnione dwa podstawowe warunki. Pierwszym z nich jest odległość punktów reprezentujących środki otworów w obrębie jednej grupy. Drugi parametr reguluje minimalną liczbę wykrytych elementów do utworzenia szyku. Jest to bardzo istotne, ponieważ zapobiega traktowaniu potencjalnych zakłóceń jako dodatkowej grupy. Dokładne działanie tego punktu realizuje poniższa funkcja.
+
+```python
+def group_create(sorted_list, max_distance, items_in_group):
+    output = []
+    if len(sorted_list) != 0:
+        previous = sorted_list[0]
+    else:
+        previous = 0
+    cut = 0
+    for i,x in enumerate(sorted_list[1:], start=1):
+        if abs(x - previous) >= max_distance:
+            if i - cut >= items_in_group:
+                output.append((cut, i-1))
+            cut = i
+        previous = x
+    if len(sorted_list) - cut >= items_in_group:
+        output.append((cut, len(sorted_list)-1))
+    return output
+
+```
+
+\newpage
+
+### Zliczanie elementów
+
+Ostatnim etapem jest zwrócenie liczby otworów w postaci liczbowej. Dysponując grupami z poprzedniej opracji, które przedstawione są w postai stałej wartości rzędnej na obrazie zdefionowany został region, w którym znajdować się będą wykrywane elementy. W tym celu została obliczona odległość miedzy dwoma prostymi a następnie przy użyciu wartości procentowych obszar został doprecyzowany do warunków rzeczywistych. Zastosowana metoda posiada pewnie ograniczenia, ponieważ może analizować tylko i wyłącznie jeden przedmiot w pojedyńczej klatce obrazu. Dla tak wyznaczonego obszaru (kolor niebieski na poniższej grafice) ponowiony został proces wyseparowania krawędzi znany z poprzenich punktów przwtwarzania. Poniżej znaduje sie również fragment kodu realizujący opisane operacje.
+
+![Zdefiniowanie ROI oraz liczanie elementów](./DATA/Images_to_Thesis/groups2_with.jpg){width="100%"}
+
+
+\newpage
+
+```python
+def approximate(img,imgContour,rectangle_center,ymin=250,ymax=550):
+    groups = group_create(rectangle_center,5,5)
+    font = cv2.FONT_HERSHEY_SIMPLEX 
+    comp = [np.round(np.mean(rectangle_center[groups[i][0]:groups[i][1]]),2) 
+            for i,j in enumerate(groups)]
+    for i in comp:
+        cv2.line(imgContour, (int(i), 0), 
+                (int(i), 640), (0, 0, 255), 
+                thickness=1)
+    try:
+        if len(comp) == 2 and (comp[1]-comp[0]) < 150:
+            diff = (comp[1]-comp[0])
+            x1 = int(comp[0]+0.85*diff)
+            x2 = int(comp[0]+0.99*diff)
+            cv2.rectangle(imgContour,(x1,ymin),(x2,ymax),(255,0,0),2)
+            contours,hierarchy = cv2.findContours(img[ymin:ymax,x1:x2],
+                                cv2.RETR_CCOMP,
+                                cv2.CHAIN_APPROX_SIMPLE)[-2:]
+            cont = 
+            [i for i in range(len(contours)) 
+            if hierarchy[0][i][3] != -1 and 
+            cv2.contourArea(contours[i]) < cv2.getTrackbarPos("Area",
+                                                "Parameters")]
+            cont_len = str(len(cont))
+            cv2.putText(imgContour,
+                        text=cont_len,org=(10,100), 
+                        fontFace=font,
+                        fontScale= 4,
+                        color=(255,255,255),
+                        thickness=2,
+                        lineType=cv2.LINE_AA)
+            cv2.imshow('Detected holes',imgContour[ymin:ymax,
+                                        int(x1):int(x2)])
+    except:
+        print('Invalid comp dimension!')
+
+```
+
+\newpage
+
+# Wyorzystanie sieci neuronowych
+
+## Cel wprowadzenia sieci neuronowej
+
+## Informacje wstęne
+
+## Tworzenie sieci neuronowej
+
+### Schemat 
 
 \newpage
 ## Bibliografia
