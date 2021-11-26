@@ -5,10 +5,10 @@ author: "Slawomir Serafin"
 date: "`r Sys.Date()`"
 bibliography: references.bib
 output:
-  pdf_document: default
+  word_document: default
   html_document:
     df_print: paged
-  word_document: default
+  pdf_document: default
 fontsize: 12pt
 ---
 
@@ -313,7 +313,6 @@ ret,thresh1 = cv2.threshold(imgDil,100,255,cv2.THRESH_BINARY_INV)
 Kontury można przedstawić w prosty sposób jako krzywą łączącą punkty wzdłuż granicy o takim samym kolorze lub intensywności. Przy ich pomocy można w dość prosty sposób analizować wykrywanie obiektów lub ich rozpoznawanie. W celu zapewnienia najlepszych efektów na wejście algorytmu podaje się najczęsciej zdjęcie w postaci binarnej, co zostało wykonane w poprzednich punktach. Do implementacji służy funkcja *cv2.findContours()* do której zależy dostarczyć trzy argumenty. Pierwszym z nich jest zbinearyzowany obraz, następnie określa się algorytm separacji krawędzi a jako trzecią wartość podaje się metodę aproksymacji. Zastosowany algortym *RETR_CCOMP* charakteryzuje się zwracaniem krawędzi w sposób hierarchiczny tworząc dwa poziomy dla konturów zewnętrznych oraz wewnętrznych. Pierwszą warstwę tworzy obramowanie całego wykrytego elementu. Wszystkie kontury znajdujące się wewnątrz niego stanowią jedną grupę i zostają sklasyfikowane jako drugi stopień drabiny zależności. *CHAIN_APPROX_SIMPLE* służy natomiast do zwrócenia punktów granicznych krawędzi, dla których następuje zmiana w kierunku poziomym, pionowym oraz po przekątnej. Przykładowo dla wykrytego prostokąta byłyby to wyłącznie cztery punkty. Tak wykryte krawędzie są następnie filtrowane za pomocą powierzchni, która jest zdefiniowane przez użytkownika przy pomocy trackbara. Jeżeli zostaną spełnione warunki tj. wykrywany kontrur znajduje się we wnętrzu zewnętrznego oraz jego powierzhnia jest mniejsca od zdefiniowanej wartości granicznej następuje graficzna wizualizacja procesu w oparciu o metodę *cv2.drawContours()*. Następnie wykonywany jest dodatkowy proces, który umożliwi identyfikacje grup obiektów. Do tego celu następuje zaproksymowanie konturu przy pomocy krzywej a następnie wpisanie jest w równanie prostokąta. Mając te dane można wyznaczyć środek ciężkości figury w postaci pojedynczego punktu zawierającego informacje o jego położeniu. Koncowym etapem jest zwrócenie tych wartości w postacji posortowanej listy. Poniższa grafika prezentuje w uproszczony sposób działanie algorytmu. Środki ciężkości zostały przedstawione w postaci czerwonych punktów.
 
 
-
 ![Wysyperowanie konturów oraz wyznaczenie środków ciężkości](./DATA/Images_to_Thesis/circle_centers.jpg){width="40%"}
 
 \newpage
@@ -428,11 +427,79 @@ def approximate(img,imgContour,rectangle_center,ymin=250,ymax=550):
 
 \newpage
 
-# Wyorzystanie sieci neuronowych
+# Wykorzystanie sieci neuronowych
 
 ## Cel wprowadzenia sieci neuronowej
 
+Jednym z parametrów opisujących przetwarzanie obrazów jest ilość klatek, które zostają przetwarzane w czasie jednej sekundy. Wartość tą najczęściej ustala się na poziomie serwera obsługującego protokół RSTP, jednak istnieje możliwość wykonania tej operacji również w oparciu o bibliotekę OpenCV. Przy wyborze opisywanej wartości należy kierować się w oparciu o dotychczasową wiedzę na temat dynamiki przetwarzanego obiektu. Jeżeli dokładość jest priorytetem i jednocześnie algorytm będzie pracować na obrazie w czasie rzeczywistym liczba klatek na sekundę powinna minimalnie wynosić około 30. Możemy jednak modyfikować ten parametr w zależności od aktualnej wydajności zaimplementowanych algorytmów. Należy jednak mieć również na uwadze, że mogą występować chwilowe spadki wydajności sieci, co może skutkować przerwami w dostarczaniu obrazów do programu. W konsewwecnji program może zwrócić błąd, co należy uwzględnić w postaci zwrócenia odpowiedniego wyjątku obsługującego taką sytuację. Mając na uwadzę opisany parametr można w łatwy sposób dojść do wniosku, że program odwieża swoje parametry wyjściowe z częstotliwością, która jest w przybliżeniu równa (opóźniona o czas przetwarzania) częsotliwości odświeżania obarazu. Warto w tym miejscu przypomnieć, że kod programu w swoim działaniu opierał się często na binarnym przetwarzaniu danych, zatem nawet niewielkie przekroczenie wartości progowania skutkuje zwróceniem zupełnie innej wartości wyjściowej. Innymi słowy program ma niewielki margines błędu, ponieważ zwraca jedynie informacje w postacji liczbowej. Można to porównać do układów cyfrowych cechująch się wyłącznie dwoma stanami pracy (brak informacji lub jest występowanie). W celu wprowadzenia wartości pośrednich zostanie wykorzystana sieć neuronowa, która bazować będzie na obrazie nieprzetworzonym (bezpośrednio z kamery). Przy odpowiednim wytrenowaniu sieci możliwa będzie dokładniejsza analiza pozwalająca w sposób procentowy zwracać informacje o występowaniu obiektu, który został zaimplementowany w procesie trenowania. Następuje jednak konieczność wstępnego wyseparowania obszaru z użyciem biblioteki OpenCV, ponieważ wykrywany obiekt będzie poruszał się dynamicznie, więc nie ma możliwości z góry przypisać miejsca w którym będzie się znajdował.
+
 ## Informacje wstęne
+
+### Podział algorytmów
+
+Wraz z rozwojem technologicznym oraz przechodzeniem z wersji papierowej na cyfrową pojawiła się ogromna liczba danych, które trudno analizować w oparciu o metody tradycyjne. Zastosowanie uczenia maszynowego okazało się dobrym rozwiązaniem w tym przypadku. Algorytmy możemy podzielić na trzy główne grupy: **Supervised Learning**, **Unsupervided Learning** oraz **Reinforecement Learning**.
+
+![Podział algorytmów uczenia maszynowego](./DATA/Images_to_Thesis/machine_learning_division.jpg){width="100%"}
+
+\newpage
+
+**Supervised Learning** wymaga od użytkownika znajomości parametrów wyjściowych, jakie powinien otrzymać dostarczając dane na wejście sieci. Głównym zadaniem takiego rozwiązanie jest zdefiniowanie odpowiedniej funkcji, która w sposób najbardziej optymalny będzie aproksymować relacje pomiędzy wyjściem a wejściem. Podstawowe algorytmy stosowane w takiej konfiguracji bazują na klasyfikacji lub regresji.
+
+**Unsupervised Learning** nie ma zdefiniowanych etykiet wartości wyjściowych. Takie podejście można zastosować w przypadku gdy chcemy znaleźć relacje pomiędzy danymi wyjściowymi oraz w jaki sposób są one między sobą powiązane. Najczęsciej algorytmy tego rodzaju wykorzystywane są do operacji grupowanie danych w określone grupy (klasteryzacja). 
+
+[@Machine_Learning_1]
+
+**Reinforcement Learning** jest podejściem bazującym na danych pobieranych ze zdefiniowanego środowiska a następnie wybiera opcję dla której posiada maksymalną wartość zysku. Jest to popularne rozwiązanie stosowane w wielu grach komputerowych oraz programach automatyzujących, gdzie po podjęciu konkretnego działania następuje konieczność wyboru opcji optymalnego rozwiązania. Użytkownik musi jednak zdefiniować w fazie projektowania, jakie są jego priorytety i jakie są oczekiwania wobec wykonywanego programu. 
+
+[@Machine_Learning_2]
+
+\newpage
+
+### Zastosowanie w życiu codziennym
+
+Obecnie każdy nawet o tym nie wiedząc ma codziennie styczność z algorytmami uczenia maszynowego. Sprawdzając poranną pocztę, dzięki inteligentnemu wykrywaniu spamu nie musimy zaczynać dnia od grupowania wiadomości na ważne oraz spam, dzieje się to automatycznie właśnie w oparciu o uczenie maszynowe. Wiele osób zastanawia się dlaczego reklamy, które są widoczne na jego ekranie tak bardzo wpisują się w aktualne oczekiwania. Akceptująć popularne ciasteczka wyrażamy zgodę na przetwarzania danych przeglądania, które są analizowane przez sieć neuronową, która na podstawie algorytmów klasteryzacji dopasowuje treści z tej samej kategorii jak ostatnio przeglądane. Nie trzeba uruchamiać nawet komputera, żeby wejść w świat nowoczesnych technologii. Obecnie urządzenia gospodarstwa domowego również działają w oparciu to najnowocześniejsze rozwiązania techniczne. Przykładem są tutaj odkurzacze, które inteligentnie dopasowują moc ssania do aktualnej powierzchni na której operują. Istnieją również oświetlenia dopasowujące temperaturę barwową oraz moc świetlną w zależności od aktualnego użytniwnika lub również warunków świetlnych znajdujących się na zewnątrz. Jednak uczenie maszynowe to nie tylko ułatwianie jego życia ale również jego ratowanie oraz dbałość o bezpieczeństwo. Wiele zabiegów medycznych jest wykonywanych w oparciu o dane, które zostały zebrane na poprzednich pacjentach. Dysponując takimi informacjami można określić aktualne ryzyko oraz najbardziej optymalne rozwiązanie pracując jednocześnie w czasie rzeczywistym. Branża systemów inteligentych ma jednak swoją kolebkę w przemyśle obronnym oraz militarnym. Zawsze najnowocześniejsze rozwiązanie najpierw zostają testowane w zakresie militarnym a dopiero potem trafiają do zastosowań cywilnych. Dla przykładu mogą posłużyć rakiety typu **LRASM** (*Long Range Anti-Ship Missile*), które same dobierają trajektorię lotu w taki sposób aby uniknąć wykrycia przez radary przeciwnika skracając przy tym czas reakcji do minimum. Dodatkowo wyposażone są one w systemy przetwarzania obrazu aby trafić w najbardziej nefralgiczne miejsce. Bez uczenia maszynowego nie skorzystalibyśmy z tłumacza, który z pomocą algorytmów rozpoznaje nie tylko poszczególne słowa ale również składnię oraz gramatykę języka. Obecnie nie jest jeszcze to na tyle dopracone, aby można było polegać na takim rozwiązaniu bezgraniczne, jednak widoczny jest duży rozwój technologii z perspektywy ostatnich lat. Pozostając przy podobnych rozwiązaniach należy wspomnieć również o przetwarzaniu języka naturalnego, co jest szczególnie istotnie dla osób z pewnym stopniem niepełnosprawności werbalnej. W oparciu o rozwiązania techniczne są oni w stanie komunikować się z resztą społeczeństwa co zapobiega izolacji społecznej.
+
+\newpage
+
+### Budowa neuronu
+
+Początki uczenia głębokiego (*Deep learning*) można datować na lata czterdzieste ubiegłego wieku. Było to możliwe w oparciu o formułę matematycznej implementacji sztuczego neuronu, który z kolei powstał jako inpiracja naturą a w szczególności odkryciu sposobu w jaki nasz mózg przekazuje informacje do reszty organów. Dane w postaci liczbowej reprezentujące wartości wag połączen między poszczególnymi elementami pochodzą z gałęzi zwanych dentrytami, które następnie trafiają do głównego węzła sumującego. W zależności od struktury sieci do układu może zostać dołączone dodatkowe obciążenie (*bias*). W głównej jednostce operacyjnej zwanej również dendrytem następuje wykonanie operacji matematycznej polegającej na wymnożeniu każdej wartości pochodzacej a dendrytu przez jej wagę, zsumowania wszystkich dostarczonych informacji a następnie przepuszczenie ich przez funkcję determinującą wartość na wyjściu (*activation function*). Można wyróżnić trzy podstawowe rodzaje wspomnianych funkcji. Pierwszą z nich jest **RuLU** (*Rectified Linear Unit*), która cechuje sie linową zależnością, gdy wartość wejściowa jest dodatnia, w przciwnym wypadku na wyjściu układu otrzymamy zero. Ze względu na łatwą implementację oraz oraz wysoką wydajność jest one najczęsciej stosowana w praktycznej implementacji. Możemy wyróżnić również funckję w postaci **sigmoid** oraz **tanh**, których matematyczne implementacje oraz kształty zostały przedstawione poniżej.
+
+\begin{equation}
+y=\max \left(0, w^{T} x+b\right)
+\end{equation}
+
+![ReLU](./DATA/Images_to_Thesis/relu.jpg){width="50%"}
+
+\newpage
+
+\begin{equation}
+y=\frac{e^{z}-e^{-z}}{e^{z}+e^{-z}}
+\end{equation}
+
+![tanh](./DATA/Images_to_Thesis/tanh.jpg){width="50%"}
+
+\begin{equation}
+f(z)=\frac{1}{1+\exp (-z)}
+\end{equation}
+
+![sigmoid](./DATA/Images_to_Thesis/sigmoid.jpg){width="50%"}
+
+
+\newpage
+
+![Budowa neuronu inspirowana biologią](./DATA/Images_to_Thesis/biological_neuron.jpg){width="70%"}
+
+![Implementacja neuronu w praktyce](./DATA/Images_to_Thesis/artifical_neuron.jpg){width="70%"}
+
+[@Tensorflow_1]
+
+\newpage
+
+### Określenie dokładności otrzymanego modelu
+
+
+\newpage
 
 ## Tworzenie sieci neuronowej
 
