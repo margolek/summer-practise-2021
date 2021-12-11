@@ -5,10 +5,10 @@ author: "Slawomir Serafin"
 date: "`r Sys.Date()`"
 bibliography: references.bib
 output:
-  word_document: default
+  pdf_document: default
   html_document:
     df_print: paged
-  pdf_document: default
+  word_document: default
 fontsize: 12pt
 ---
 
@@ -46,7 +46,7 @@ W projekcie wykorzystane zostaną różne biblioteki, jednak wspólnym mianownik
 
 ## Protokół RTSP
 
-Pierwszym krokiem zanim zaczniemy analizować jakiekolwiek dane musimy uzyskać do nich dostęp. Możemy to zrobić na wiele różnych sposób. Jednym z nich jest fizyczne zrobienie zdjęć nad obiektem, które potem będziemy analizować. Rozwiązanie wydaje się stosunkowo proste jednak niesie ze sobą wiele negatywnych aspektów. Rozdzielczość, którą będziemy aktualnie dysponować oraz inne parametry aparatu mogą się znacznie różnić od docelowego rozwiązania. Co więcej, analiza pojedyńczej klatki nie pozwala nam w żaden sposób sprawdzić wydajności stosowanych algorytmów, które mogą okazać się zbyt wolne podczas pracy nad rzeczywistym obiektem. Zatem poszukiwane rozwiązanie powinno być już wstępnie znormalizowane do warunków, w jakich będzie działać w późniejszym etapie. Dodatkowo aby jednocześnie kontrolować aspekt wydajnościowy przekazywany obraz powinien na bieżąco dostarczać kolejne klatki przechwyconego obiektu. W tym miejscu również możemy zastosować dwa podejścia zastosowania problemu. Jednym z nich jest zastosowanie kamery, która będzie się komunikować z komputerem przy użyciu złącza typu USB. Jest to dość proste rozwiązanie jednak wymaga fizycznego połączenia między kamerą a komputerem. Niestety warunki panujące na zakładzie uniemożliwiły takie podejście ze względu na ograniczoną ilość miejsca. Problem postanowiono zatem rozwiązać przy pomocy serwera chmurowego. Takie podejście znacznie ogranicza zastosowanie wszelkich fizycznych połączeń. Niestety musimy tutaj zaakceptować pewnie komprosimy. Jednym z nich jest ograniczenie rozdzielczości w taki sposób aby uniknąć braku płynności w przekazywanym obrazie. Ta cecha jak się okaże w kolejnych etapach okaże się bardzo problematyczna. Kolejnym aspektem jest konieczność zastosowania szybkiego łącza oraz świadomość, że w przypadku tymczasowego braku dostępu do sieci program po prostu nie będzie w stanie funkcjonować. Kolejnym krokiem po zaakceptowaniu wszystkich wad od zalet zastosowania bezprzewodowego jest wybór odpowiedniego narzędzia do przesyłu obrazu. Wybór padł tutaj na rozwiązanie w oparciu o protokół **RTSP** *(Real Time Streaming Protocol)*. Jest to rozwiązanie, które znacznie zyskało na swojej popularności podczas okresu pandemicznego, gdzie więkość z nas została zmuszona do przejścia w tryb pracy zdalnej. Całość systemu oparta jest na serwerze, który udostępnia nam dostęp do obrazu w czasie rzeczywistym. Dzięki takiemu podejściu wiele użytkowników przy pomocy odpowiedniej platformy może śledzić wydarzenia w tym samym momencie. Takie rozwiązanie jest często wykorzystywane do transmicji różnego rodzaju konferencji, posiedzeń zarządów, wydarzeń kulturowych, czy nawet wydarzeń sportowych. Poniższa grafika przedstawia uproszczony schemat działania. Platformą obługującą w naszym przypadku będzie biblioteka *OpenCV*.
+Pierwszym krokiem jest uzyskanie dostępu do danych, które będą analizowane. Można to zrobić na wiele różnych sposób. Jednym z nich jest fizyczne wykonanie zdjęć nad obiektem, które potem zostaną poddane analizie. Rozwiązanie wydaje się stosunkowo proste jednak niesie ze sobą wiele negatywnych aspektów. Rozdzielczość oraz inne parametry aparatu mogą się znacznie różnić od docelowego rozwiązania. Co więcej, analiza pojedyńczej klatki nie pozwala nam w żaden sposób sprawdzić wydajności stosowanych algorytmów, które mogą okazać się zbyt wolne podczas pracy nad rzeczywistym obiektem. Zatem poszukiwane rozwiązanie powinno być już wstępnie znormalizowane do warunków, w jakich będzie działać w późniejszym etapie. Dodatkowo, aby jednocześnie kontrolować aspekt wydajnościowy przekazywany obraz powinien na bieżąco dostarczać kolejne klatki przechwyconego obiektu. W tym miejscu również można zastosować dwa podejścia rozwiązania problemu. Jednym z nich jest zastosowanie kamery, która będzie się komunikować z komputerem przy użyciu złącza typu USB. Jest to dość proste rozwiązanie jednak wymaga fizycznego połączenia między kamerą a komputerem. Niestety warunki panujące na zakładzie uniemożliwiły takie podejście ze względu na ograniczoną przestrzeń roboczą. Problem postanowiono zatem rozwiązać przy pomocy serwera chmurowego. Takie podejście znacznie ogranicza zastosowanie wszelkich fizycznych połączeń. Niestety takie podejście wymaga zaakceptowania pewnych kompromisów. Jednym z nich jest ograniczenie rozdzielczości w taki sposób aby uniknąć braku płynności w przekazywanym obrazie. Ta cecha jak się okaże w kolejnych etapach jest bardzo problematyczna. Kolejnym aspektem jest konieczność zastosowania szybkiego łącza oraz świadomość, że w przypadku tymczasowego braku dostępu do sieci program po prostu nie będzie w stanie funkcjonować. Kolejnym krokiem po zaakceptowaniu wszystkich wad od zalet zastosowania bezprzewodowego jest wybór odpowiedniego narzędzia do przesyłu obrazu. Wybór padł tutaj na rozwiązanie w oparciu o protokół **RTSP** *(Real Time Streaming Protocol)*. Jest to narzędzie, które znacznie zyskało na swojej popularności podczas okresu pandemicznego, gdzie więkość z nas została zmuszona do przejścia w tryb pracy zdalnej. Całość systemu oparta jest na serwerze, który udostępnia obraz w czasie rzeczywistym. Dzięki takiemu podejściu wiele użytkowników przy pomocy odpowiedniej platformy może śledzić wydarzenia w tym samym momencie. Takie rozwiązanie jest często wykorzystywane do transmicji różnego rodzaju konferencji, posiedzeń zarządów, wydarzeń kulturowych, czy nawet wydarzeń sportowych. Poniższa grafika przedstawia uproszczony schemat działania. Platformą obługującą w naszym przypadku będzie biblioteka *OpenCV*.
 
 ![Wykorzystanie protokołu RTSP jako źródło informacji o produkcie](./DATA/Images_to_Thesis/rtsp.jpg)
 
@@ -56,14 +56,14 @@ Pierwszym krokiem zanim zaczniemy analizować jakiekolwiek dane musimy uzyskać 
 
 ![Logo biblioteki OpenCV](./DATA/Images_to_Thesis/opencv_logo.png){width="50%"}
 
-**OpenCV (Open Source Computer Vision Library)** jest biblioteką funckconującą na zasadach licencji otwartnej. Jej głównym zastoswaniem jest wykonywanie operacji na obrazach w czasie rzeczywistym. W skład biblioteki wchodzą również algorytmy uczenia maszynowego, które znacząco zwiększają zastosowanie oraz wydajność operacji. Kluczowym założeniem przy konfiguracji był aspekt komptybilności z rozwiązaniami komercyjnymi. Biblioteka jest łatwa w modyfikacji oraz posiada przejrzystą strukturę kodu. W skład pakietu wchodzą zarówno klasyczne rozwiązania stosowane od wielu dekad do analizy obrazów jak i najnowoczesniejsze struktury dostarczane przez społeczność, która znacząco przyczynia się do rozwoju produktu. Algorytmy mogą służyć między innymi do wykrywania twarzy na zdjęciach, identyfikacji obiektów, klasyfikacji nastoru w jakim znajduje się użytkownik, śledzenia obiektu w ruchu, redukcji czerownych oczu. W dobie sytuacji penczemicznej program może wykrywać czy wszyscy uczesticzy spotkania mają założene maseczki. Aktualnie nasilony jest również problem migracyjny. Systemy bezpieczeństwa które nieustannie sledzą granice państw są wyposażone również w algorytmy inteligentnego przetwarzania obrazu. Dane na stronie producenta wzkazują, że biblioteka została już pobrana przez ponad 18 milionów użytkowników. OpenCV jest ciągle rozwijana nie tylko przez grupy pastonatów, lecz również jest przedmiotem analiz grup badawczych a nawet organów rządowych. Wsród użytkowników znajdują się rownież wielkie korporacje tj. Google, Microsoft, Intel, IBM, Honda, Sony, VideoSurf, Zeitera. Znane wszystkim użytkownikom Google Maps używa właśnie OpenCV w swoich zastosowaniach. Cała składnia języka została zbudowana w oparciu o język *C++*. Wraz z rozwojem popularności producenci postanowili jednak przyciągnąć nowych użytkowynków udostępniając **API**, dzięki czemu z biblioteką możemy się komunikować przy pomocy języka Python, Java oraz dostępne są pewnie funkcjonalne aspekty również w środowisku MATLAB. Interfejs wspiera najważniejsze systemy operacyjne jak: Windows, Mac OS, Linux oraz Android. Dodatkowo implementacja kodu może również być wykonywana z wykorzystaniem mikrokontrolerów z rodziny Arduino oraz Raspberry Pi. Przy wykonywania bardziej zaawansowanych operacjach warto rozważyć akcelerację w oparciu o system **CUDA** oraz **OpenCL**. Jest to jednak możliwe tylko i wyłącznie, jeżeli dysponujemy kartą graficzną o wysokim standardzie. Poniższa grafika ilustruje porównanie czasu wykonywania obliczeń. Na potrzeby symulacji jako GPU została użyta karta *Tesla C2050*, której osiągi porównane zostały z CPU *Core i5-760 2.8Ghz*.
+**OpenCV (Open Source Computer Vision Library)** jest biblioteką funkcjonującą na zasadach licencji otwartnej. Jej głównym zastoswaniem jest wykonywanie operacji na obrazach w czasie rzeczywistym. W skład biblioteki wchodzą również algorytmy uczenia maszynowego, które znacząco zwiększają zastosowanie oraz wydajność operacji. Kluczowym założeniem przy konfiguracji był aspekt komptybilności z rozwiązaniami komercyjnymi. Biblioteka jest łatwa w modyfikacji oraz posiada przejrzystą strukturę kodu. W skład pakietu wchodzą zarówno klasyczne rozwiązania stosowane od wielu dekad do analizy obrazów jak i najnowoczesniejsze struktury dostarczane przez społeczność, która znacząco przyczynia się do rozwoju produktu. Algorytmy mogą służyć między innymi do wykrywania twarzy na zdjęciach, identyfikacji obiektów, klasyfikacji nastoru w jakim znajduje się użytkownik, śledzenia obiektu w ruchu, redukcji czerownych oczu. W dobie sytuacji penczemicznej program może wykrywać czy wszyscy uczesticzy spotkania mają założene maseczki. Aktualnie nasilony jest również problem migracyjny. Systemy bezpieczeństwa które nieustannie śledzą granice państw są wyposażone również w algorytmy inteligentnego przetwarzania obrazu. Dane na stronie producenta wzkazują, że biblioteka została już pobrana przez ponad 18 milionów użytkowników. OpenCV jest ciągle rozwijana nie tylko przez grupy pastonatów, lecz również jest przedmiotem analiz grup badawczych a nawet organów rządowych. Wsród użytkowników znajdują się rownież wielkie korporacje tj. Google, Microsoft, Intel, IBM, Honda, Sony, VideoSurf, Zeitera. Znane wszystkim użytkownikom Google Maps używa właśnie OpenCV w swoich zastosowaniach. Cała składnia języka została zbudowana w oparciu o język *C++*. Wraz z rozwojem popularności producenci postanowili jednak przyciągnąć nowych użytkowynków udostępniając **API**, dzięki czemu z biblioteką możemy się komunikować przy pomocy języka Python, Java oraz dostępne są pewnie funkcjonalne aspekty również w środowisku MATLAB. Interfejs wspiera najważniejsze systemy operacyjne jak: Windows, Mac OS, Linux oraz Android. Dodatkowo implementacja kodu może również być wykonywana z wykorzystaniem mikrokontrolerów z rodziny Arduino oraz Raspberry Pi. Przy wykonywania bardziej zaawansowanych operacjach warto rozważyć akcelerację w oparciu o system **CUDA** oraz **OpenCL**. Jest to jednak możliwe tylko i wyłącznie, jeżeli dysponujemy kartą graficzną o wysokim standardzie. Poniższa grafika ilustruje porównanie czasu wykonywania obliczeń. Na potrzeby symulacji jako GPU została użyta karta *Tesla C2050*, której osiągi porównane zostały z CPU *Core i5-760 2.8Ghz*. [@OpenCV_about]
 
 
 ![Porównanie czasu obliczeń dla CPU oraz GPU](./DATA/Images_to_Thesis/opencv_CUDA.png){width="100%"}
 
 ### Podstawowa składnia
 
-W przypadku gdy źródłem obrazu jest kamera dostarczająca określoną liczbę klatek na dany okres czasowy strukturę programu możemy podzielić na dwa bloki: wnętrze pętli *while* oraz wartości lub funkcje zdefiniowane poza jej obrębem. Pierwszym etapem rozpoczęcia pracy jest import bibliotek, które będą wykorzystywane. W kolejnym kroku definiujemy źródło obrazu. W tym przypadku *cap = cv2.VideoCapture(0)* odnosi się do sprzętu zdefiniowanego przez komputer jako sygnał domyślny, w dalszej części zostanie on zastąpiony poprzez opisany wcześniej protokół **RTSP**. Kolejno zdefiniowane jest pętla *while*, która jest wykonywana dopóki uzytkownik nie naciście przycisku powodującego przerwanie operacji (w tym przypadku jest to klawisz *q*). Funkcja *cap.read()* zwraca nam dwie wartości: *ret* oraz *frame*. Pierwsza z nich jest zmienna typu boolowskiego informująca nas czy obraz został przechwycony w sposób prawidłowy. Zmienna *frame* natomiast jest obrazem przedstawionym w postaci wektora.
+W przypadku gdy źródłem obrazu jest kamera dostarczająca określoną liczbę klatek na dany okres czasowy strukturę programu możemy podzielić na dwa bloki: wnętrze pętli *while* oraz wartości lub funkcje zdefiniowane poza jej obszarem. Pierwszym etapem rozpoczęcia pracy jest import bibliotek, które będą wykorzystywane. W kolejnym kroku definiujemy źródło obrazu. W tym przypadku *cap = cv2.VideoCapture(0)* odnosi się do sprzętu zdefiniowanego przez komputer jako sygnał domyślny, w dalszej części zostanie on zastąpiony poprzez opisany wcześniej protokół **RTSP**. Kolejno zdefiniowane jest pętla *while*, która jest wykonywana dopóki uzytkownik nie naciście przycisku powodującego przerwanie operacji (w tym przypadku jest to klawisz *q*). Funkcja *cap.read()* zwraca nam dwie wartości: *ret* oraz *frame*. Pierwsza z nich jest zmienna typu boolowskiego informująca nas czy obraz został przechwycony w sposób prawidłowy. Zmienna *frame* natomiast jest obrazem przedstawionym w postaci wektora.
 
 \newpage
 
@@ -91,7 +91,7 @@ while(cap.isOpened()):
 
 ![Conda logo](./DATA/Images_to_Thesis/conda_logo.jpg){width="100%"}
 
-Zarówno środowisko *Python* jak i wszystkie potrzebne pakiety zostały zainstalowane w oparciu o środowisko **Conda**. Jest to system zarządzania pakietami działający na wszystkich popularnych systemach operacyjnych. Najbardziej rozpowszechniony oraz wykorzystywany jest przez użytkowników zajmujacych się ptrzetwarzaniem oraz analizą danych. Mogą być to pliki tekstowe jak również multimedialne. Środowisko wspiera również inne popularne jezyki programowania tj. *R*, *Ruby*, *Java*, *C/C++*, *FORTRAN*, *JavaScript*. Conda z łatwością przechowuje, tworzy oraz osbługuje biblioteki, które są instalowane w oparciu o dany język programowania. Mając na uwadze fakt, że pisany program będzie w przyszłości dystrybuowany na wiele różnych urządzeń potrzebna jest funkcjonalność, która pozwoli zebrać wszystkie potrzebne pliki w jednym miejcu. W tym momencie z pomocą przychodzi nam *Wirutalne  Środowisko*. Pozwoli nam to wyseparować wersje różnych bibliotek, gdzie zostały już wcześniej zainstalowane na komputerze co w prosty sposób pozwoli nam unikąć możliwej w przyszłości niekompatybilności. Kolejnym ważnym aspektem jest separacja. Dokonując modyfikacji pakietów wyłącznie w obrębie wirtualnego środowiska nie oddziałowujemy w żaden sposób na wersje zainstalowane globalne, co sprawia, że nie wpływamy na kompatybilność wcześnniej wykonanych projeków. Do stworzenia oraz aktywacji wirutalnego środowiska służy poniższa składnia.
+Zarówno środowisko *Python* jak i wszystkie potrzebne pakiety zostały zainstalowane w oparciu o środowisko **Conda**. Jest to system zarządzania pakietami działający na wszystkich popularnych systemach operacyjnych. Najbardziej rozpowszechniony oraz wykorzystywany jest przez użytkowników zajmujacych się przetwarzaniem oraz analizą danych. Mogą być to pliki tekstowe jak również multimedialne. Środowisko wspiera również inne popularne jezyki programowania tj. *R*, *Ruby*, *Java*, *C/C++*, *FORTRAN*, *JavaScript*. Conda z łatwością przechowuje, tworzy oraz osbługuje biblioteki, które są instalowane w oparciu o dany język programowania. [@Conda] Mając na uwadze fakt, że pisany program będzie w przyszłości dystrybuowany na wiele różnych urządzeń potrzebna jest funkcjonalność, która pozwoli zebrać wszystkie potrzebne pliki w jednym miejcu. W tym momencie z pomocą przychodzi *Wirutalne  Środowisko*. Pozwoli to wyseparować wersje różnych bibliotek, gdzie zostały już wcześniej zainstalowane na komputerze co w prosty sposób umożliwia uniknięcie w przyszłości niekompatybilności. Kolejnym ważnym aspektem jest separacja. Dokonując modyfikacji pakietów wyłącznie w obrębie wirtualnego środowiska nie oddziałowujemy w żaden sposób na wersje zainstalowane globalne, co sprawia, że nie wpływamy na kompatybilność wcześnniej wykonanych projeków. Do stworzenia oraz aktywacji wirutalnego środowiska służy poniższa składnia.
 
 \newpage
 
@@ -152,9 +152,9 @@ py-opencv                 3.4.2            py36hc319ecb_0
 
 ![Okno programu Google Colaboratory](./DATA/Images_to_Thesis/colab.jpg){width="100%"}
 
-**Jupyter Notebook/Jupyter Lab** jest częścią projektu *Jupyter*, który wyewoluował z inrearaktywnej wersji Pythona *IPython* w roku 2014. Jest to program o charakterze *non-profit* bazujący na bezpłatnej licencji. Środowisko znajduje szerokie zastosowanie w przetwarzaniu danych, obliczeniach numerycznych z wykorzystaniem różnych języków programowania. W odróżnieniu do klasycznego pisania kodu struktura podzielona jest na osobne sekcje zwane potocznie komórkami. Wykonywany program możemy uruchamiać poszczególnymi fragmentami. Po instalacji dodatkowych pakietów, możemy mieć podgląd do aktualnych wartości zmiennych, które są zdefiniowane w programie na zasadach podobnych do tego co oferuje nam pakiet MATLAB. Nowe elementy mogą przybierać również formę multimedialną w postaci zdjęć bądz równań matematycznych zapisywanych zgodnie ze składnią Latex.
+**Jupyter Notebook/Jupyter Lab** jest częścią projektu *Jupyter*, który wyewoluował z inrearaktywnej wersji Pythona *IPython* w roku 2014. Jest to program o charakterze *non-profit* bazujący na bezpłatnej licencji. Środowisko znajduje szerokie zastosowanie w przetwarzaniu danych, obliczeniach numerycznych z wykorzystaniem różnych języków programowania. W odróżnieniu do klasycznego pisania kodu struktura podzielona jest na osobne sekcje zwane potocznie komórkami. Wykonywany program możemy uruchamiać poszczególnymi fragmentami. Po instalacji dodatkowych pakietów, można mieć podgląd do aktualnych wartości zmiennych, które są zdefiniowane w programie na zasadach podobnych do tego co oferuje nam pakiet MATLAB. Nowe elementy mogą przybierać również formę multimedialną w postaci zdjęć bądz równań matematycznych zapisywanych zgodnie ze składnią Latex. [@Jupyter]
 
-**Google Colaboratory** jest chmurowyn odpowiednikiem *Jupytera* dostarczonym przez firmę *Google*. Największą zaletą takiego rozwiązania jest brak konieczności instalowania dodatkowych bibliotek. Wszystkie potrzebne pakiety dostarczone są wraz ze środowiskiem. Program domyślnie używa najnowszych pakietów, dlatego jeżeli wymagamy konkretnej wersji biblioteki musimy to wcześniej zdefiniować. Należy mieć również na uwadze, że *Colab* zbudowany jest w oparciu o system Linux, dlatego aby sprawnie poruszać się bo katalogach oraz zarządzać plikami należy posiadać podstawową wiedzę z zakresu pracy z *Terminalem*. Dodatkowo możemy cały projekt zsynchornizować z zewnętrznymi źródłami co daje możliwość obsługi plików z lokalnego poziomu komputera. W zależności czy zdecydujemy się na wykupienie wersji *Pro* czy zostaniemy na wariancie darmowym *Colab* oferuje nam akcelerację GPU, co jest świetnym rozwiązaniem jeżeli mamy ograniczone możliwości sprzętowe. Niestety OpenCV w znacznym stopniu wykorzystuje bibliotekę *Qt* do tworzenia okienek w których znajdują się rezultaty programu, zatem z poziomu przeglądarki nie będziemy mieli do nich dostępu. Istnieją pewnie rozwiązania, które częściowo niwelują ten problem jest nie są na tyle wydajne, żeby w pełni zastąpić wersję stacjonarną. Biorąc pod uwagę wady i zalety takie rozwiązania najlepszym wyjściem okazuje się tutaj praca w trybie hybrydowym tj. cześć obliczeniową przeprowadzić w środowisku chmurowym, natomiast rezultaty przedstawić w oparciu o *Jupytera* w formie stacjonarnej.
+**Google Colaboratory** jest chmurowyn odpowiednikiem *Jupytera* dostarczonym przez firmę *Google*. Największą zaletą takiego rozwiązania jest brak konieczności instalowania dodatkowych bibliotek. Wszystkie potrzebne pakiety dostarczone są wraz ze środowiskiem. Program domyślnie używa najnowszych pakietów, dlatego jeżeli jest potrzeba zastosowania konkretnej wersji biblioteki trzeba to wcześniej zdefiniować. Należy mieć również na uwadze, że *Colab* zbudowany jest w oparciu o system Linux, dlatego aby sprawnie poruszać się bo katalogach oraz zarządzać plikami należy posiadać podstawową wiedzę z zakresu pracy z *Terminalem*. Dodatkowo można cały projekt zsynchornizować z zewnętrznymi źródłami co daje możliwość obsługi plików z lokalnego poziomu komputera. W zależności czy zdecydujemy się na wykupienie wersji *Pro* czy zostaniemy na wariancie darmowym *Colab* oferuje akcelerację GPU, co jest świetnym rozwiązaniem jeżeli mamy ograniczone możliwości sprzętowe. Niestety OpenCV w znacznym stopniu wykorzystuje bibliotekę *Qt* do tworzenia okienek w których znajdują się rezultaty programu, zatem z poziomu przeglądarki nie będziemy mieli do nich dostępu. Istnieją pewnie rozwiązania, które częściowo niwelują ten problem jest nie są na tyle wydajne, żeby w pełni zastąpić wersję stacjonarną. Biorąc pod uwagę wady i zalety takie rozwiązania najlepszym wyjściem okazuje się tutaj praca w trybie hybrydowym tj. cześć obliczeniową przeprowadzić w środowisku chmurowym, natomiast rezultaty przedstawić w oparciu o *Jupytera* w formie stacjonarnej. [@Colab]
 
 
 \newpage
@@ -163,7 +163,7 @@ py-opencv                 3.4.2            py36hc319ecb_0
 
 ![Klasyfikacja obrazów](./DATA/Images_to_Thesis/obraz.jpg){width="100%"}
 
-Ze względu na matematyczną interpretację obrazu zostanie wprowadzona podstawowa klasyfikacja, która będzie odnośnikiem również do dalszej części pracy. W celu odwzorowania rzeczywistości wykorzystuje się wielowymiarowe struktury danych. Zależnie od źródła mogą się one nazywać *macierzami*, *tablicami*, *tensorami* bądź zwyczajnie *wektorami wielowymiarowymi*. Najprostrszym przypadkiem jest konstrukcja macierzy, która posiada pewną określoną liczbę wierszy oraz kolumn a jej strukturę możemy naszkicować na kartce papieru. Zdjęcie może przykazywać informacje tylko i wyłącznie, kiedy jego wnętrze wypełnione jest danymi. Wszystkie analizowane obiekty zostaną przedstawione w oparciu o rozszerzenie graficzne formatu **jpg**, które umożliwia wykorzystanie *8-bitowej* głębi kolorów. Oznacza to, że wnętrze macierzy może być wypełnione liczbami naturalnymi z przedziału od 0 do 255. Często w kolejnych etapach pracy wykonuje się operacje normalizowania tj. przeskalowania wszystkich liczb znajdujących się we wcześniej wspopminanym zakresie na przedział od 0 do 1. Takie podejście umożliwia przedstawienie zdjęcia tylko i wyłącznie w odcieniu jednego koloru. W sytuacji gdy jest potrzeba zastosowania formatu wilokolorowego musimy rozszerzyć istniejącą warstwę o dwie dodatkowe i wykonać na każdej z nich kolejno mapowanie na kolor czerowny (R), zielony (G) oraz niebieski (B). Jeżeli pojedyńcza wartość piksele może znajdować się w zakresie od 0 do 255 oraz uwzględnimy liczbę kanałów to otrzymujemy paletę barw zdolną do odwzorowania niemal *17 mln* kolorów. Ławtwo jednak zauważyć, że zdjęcie wielokolorowe zwiększa ilość dostarczanych informacji trzykrotnie co może nie być pożądane pod kątem wydajnościowym. Tutaj decyzja o formacie leży tylko i wyłącznie po stronie użytkownika, który musi określić czy identyfikacja  kolorów pomoże mu w rozwiązaniu problemu czy jest wyłącznie dodatkowymi, zbędnymi informacjami. Analizując zdjęcie monochromatyczne, możemy przedstawić je w odcieniu jednego koloru (najczęściej głębia koloru szarego) lub zbinearyzować tj. uprościć obraz tylko i wyłącznie do jego warunków brzegowych (brak informacji lub jej obecność). Ta własność okaże się bardzo przydatna w kolejnych etapach przetwarzania.
+Ze względu na matematyczną interpretację obrazu zostanie wprowadzona podstawowa klasyfikacja, która będzie odnośnikiem również do dalszej części pracy. W celu odwzorowania rzeczywistości wykorzystuje się wielowymiarowe struktury danych. Zależnie od źródła mogą się one nazywać *macierzami*, *tablicami*, *tensorami*. Najprostrszym przypadkiem jest konstrukcja macierzy, która posiada pewną określoną liczbę wierszy oraz kolumn a jej strukturę możemy naszkicować na kartce papieru. Zdjęcie może przykazywać informacje tylko i wyłącznie, kiedy jego wnętrze wypełnione jest danymi. Wszystkie analizowane obiekty zostaną przedstawione w oparciu o rozszerzenie graficzne formatu **jpg**, które umożliwia wykorzystanie *8-bitowej* głębi kolorów. Oznacza to, że wnętrze macierzy może być wypełnione liczbami naturalnymi z przedziału od 0 do 255. Często w kolejnych etapach pracy wykonuje się operacje normalizowania tj. przeskalowania wszystkich liczb znajdujących się we wcześniej wspopminanym zakresie na przedział od 0 do 1. Takie podejście umożliwia przedstawienie zdjęcia tylko i wyłącznie w odcieniu jednego koloru. W sytuacji gdy jest potrzeba zastosowania formatu wilokolorowego musimy rozszerzyć istniejącą warstwę o dwie dodatkowe i wykonać na każdej z nich kolejno mapowanie na kolor czerowny (R), zielony (G) oraz niebieski (B). Jeżeli pojedyńcza wartość piksele może znajdować się w zakresie od 0 do 255 oraz uwzględniona zostanie liczba kanałów to można otrzymać paletę barw zdolną do odwzorowania niemal *17 mln* kolorów. Ławtwo jednak zauważyć, że zdjęcie wielokolorowe zwiększa ilość dostarczanych informacji trzykrotnie co może nie być pożądane pod kątem wydajnościowym. Tutaj decyzja o formacie leży tylko i wyłącznie po stronie użytkownika, który musi określić czy identyfikacja  kolorów pomoże mu w rozwiązaniu problemu czy jest wyłącznie dodatkowymi, zbędnymi informacjami. Analizując zdjęcie monochromatyczne, można przedstawić je w odcieniu jednego koloru (najczęściej głębia koloru szarego) lub zbinearyzować tj. uprościć obraz tylko i wyłącznie do jego warunków brzegowych (brak informacji lub jej obecność). Ta własność okaże się bardzo przydatna w kolejnych etapach przetwarzania.
 
 ![Obraz w różnych odcieniach szarości](./DATA/Images_to_Thesis/grayscale.jpg){width="50%"}
 
@@ -194,7 +194,7 @@ Ze względu na matematyczną interpretację obrazu zostanie wprowadzona podstawo
 
 ### Grayscale
 
-Zdjęcie dostarczone prze kamerę w trybie domyślnym zawiera trzy kanały danych (R,G,B). W celu usprawnienia wykonywanych operacji oraz możemy wykonać transformacji na obraz w odcieniach szarości. Matematyczną implementację opisuje równanie (1). Korzystając z pakietu OpenCV operację tą możemy wykonać w oparciu o dwa dostarczone argumenty. Pierwszym z nich jest obraz, natomiast w drugim członie funkcji podanie zostany sposób konwersji, w tym przypadku z kanału kolorowego na odcienie szarości.
+Zdjęcie dostarczone prze kamerę w trybie domyślnym zawiera trzy kanały danych (R,G,B). W celu usprawnienia wykonywanych operacji oraz możemy wykonać transformacji na obraz w odcieniach szarości. Matematyczną implementację opisuje równanie (1). Korzystając z pakietu OpenCV operację tą możemy wykonać w oparciu o dwa dostarczone argumenty. Pierwszym z nich jest obraz, natomiast w drugim członie funkcji podanie zostany sposób konwersji, w tym przypadku z kanału kolorowego na odcienie szarości. [@ColorConversion]
 
 ```python
 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -204,12 +204,9 @@ gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 y = 0.299R + 0.587G + 0.114B
 \end{equation}
 
-[@ColorConversion]
-
-
 ### Blurring
 
-Kolejnym krokiem jest usunięcie ze zdjęcia w jak największym stopniu, zakłóceń, które mogą w sposób inwazyjny zaburzać dalszą pracę. W tym celu wykonywana jest operacja wygładzania zdjęcia. Innym określeniem stosowanym do tego typu zabiegów jest również rozmazywanie. W ujęciu matematycznym możemy zdefiniować to jako proces filtracji. Wykonanie takiej operacji zostało przedstawione w postaci poniższego równania [@Blurring2].
+Kolejnym krokiem jest usunięcie ze zdjęcia w jak największym stopniu zakłóceń, które mogą w sposób inwazyjny zaburzać dalszą pracę. W tym celu wykonywana jest operacja wygładzania zdjęcia. Innym określeniem stosowanym do tego typu zabiegów jest również rozmazywanie. W ujęciu matematycznym możemy zdefiniować to jako proces filtracji. Wykonanie takiej operacji zostało przedstawione w postaci poniższego równania [@Blurring2].
 
 \begin{equation}
 g(i, j)=\sum_{k, l} f(i+k, j+l) h(k, l)
@@ -231,7 +228,7 @@ K=\frac{1}{K_{\text {width }} \cdot K_{\text {height }}} \cdot\left[\begin{array
 
 \newpage
 
-W przetwarzaniu obrazów najczęściej wykorzystujemy jednak giltrację w oparciu o okno Gaussa. Warto jednak w tym momencie wzrócić uwagę, że rozwiązanie nie jest najkorzystniejsze pod wzgledem wydajności, zatem jeżeli w kolejnych krokach zaobserwujemy spadek wydajności zmiana rodzaju okna może okazać się kluczową decyzją. Z racji, że obiekt na którym będziemy wykonywać operacje będzie posiadał dwa wymiary, poniższe równanie prezentuje opisywaną funkcje, natomiast poniżej widoczna jest jej graficzna interpretacja.
+W przetwarzaniu obrazów najczęściej wykorzystujemy jednak filtrację w oparciu o okno Gaussa. Warto jednak w tym momencie wzrócić uwagę, że rozwiązanie nie jest najkorzystniejsze pod wzgledem wydajności, zatem jeżeli w kolejnych krokach zaobserwujemy spadek wydajności zmiana rodzaju okna może okazać się kluczową decyzją. Z racji, że obiekt na którym będziemy wykonywać operacje będzie posiadał dwa wymiary, poniższe równanie prezentuje opisywaną funkcje, natomiast poniżej widoczna jest jej graficzna interpretacja.
 
 \begin{equation}
 G_{0}(x, y)=A e^{\frac{-\left(x-\mu_{x}\right)^{2}}{2 \sigma_{x}^{2}}+\frac{-\left(y-\mu_{y}\right)^{2}}{2 \sigma_{y}^{2}}}
@@ -241,7 +238,7 @@ G_{0}(x, y)=A e^{\frac{-\left(x-\mu_{x}\right)^{2}}{2 \sigma_{x}^{2}}+\frac{-\le
 ![Kształt funkcji gaussa dla dwóch zmiennych parametrów wraz ze współczynnikami dla wymiarów okna 3x3 [@Blurring] ](./DATA/Images_to_Thesis/gauss_2_variable.jpg){width="100%"}
 
 
-Implementacja przy użyciu dostarczeniu do funkcji trzech argumentów. Pierwszym z nich jest obraz powstawy w wyniku poprzedniej operacji. Kolejno definujemy rozmiar jądra w postaci listy statycznej. Opcojalnym krokiem jest zdefiniowanie stanu, tak aby operacja była wykonywana na wartościach znormalizowanych. Domyślnie funkcja przybiera wartość *false* 
+Implementacja przy użyciu dostarczeniu do funkcji trzech argumentów. Pierwszym z nich jest obraz powstawy w wyniku poprzedniej operacji. Kolejno definujemy rozmiar jądra w postaci listy statycznej. Opcjonalnym krokiem jest zdefiniowanie stanu, tak aby operacja była wykonywana na wartościach znormalizowanych. Domyślnie funkcja przybiera wartość *false*. 
 
 ```python
 img_blur = cv2.GaussianBlur(gray,(size,size),1)
@@ -251,7 +248,7 @@ img_blur = cv2.GaussianBlur(gray,(size,size),1)
 
 ### Canny Edge Detection
 
-Canny Edge Detection to jest z najbardziej rozpowszechnionych algorytmów służących do wyseparowania krawędzi z obrazu. Rozwiązanie zaproponował australijski infomatyk John F. Canny w roku 1986. Jest to algorytm wieloetapowy, który wymaga kilku niezalężnie związanych ze sobą operacji. Pierwszą z nich jest redukcja szumów, która została wykonana w poprzednim punkcie poprzez operację rozmazywania. Kolejnym krokiem jest przeprowadzenie obliczeń gradientowych wdluż osi x oraz y. W tym celu wykorzystywany jest algorytm Sobela. Matemetycznie wykonaną operacje przedstawia poniższy wzór.
+Canny Edge Detection to jest z najbardziej rozpowszechnionych algorytmów służących do wyseparowania krawędzi z obrazu. Rozwiązanie zaproponował australijski infomatyk John F. Canny w roku 1986 [@CannyEdge]. Jest to algorytm wieloetapowy, który wymaga kilku niezalężnie związanych ze sobą operacji. Pierwszą z nich jest redukcja szumów, która została wykonana w poprzednim punkcie poprzez operację rozmazywania. Kolejnym krokiem jest przeprowadzenie obliczeń gradientowych wdluż osi x oraz y. W tym celu wykorzystywany jest algorytm Sobela. Matemetycznie wykonaną operacje przedstawia poniższy wzór.
 
 \begin{equation}
 { EdgeGradient }(G)=\sqrt{G_{x}^{2}+G_{y}^{2}}
@@ -269,11 +266,12 @@ Powyższą operację można przedstawić w sposób graficzny co prezentuje poni�
 
 ### Dilation
 
-Dilation jest operacją, która ma na celu zwiększenie objętości wyseparowanych krawędzi. W tym przypadku jest to niezbędny proces gdyż zdjęcie jest o stosunkowo niewielkiej rozdzielczości co przekłada się na niewielką powierzchnię krawędzi. Dodatkowo taki proces jest potrzebny, ponieważ kontury uzyskane w wyniku poprzedniej operacji często nie tworzą obszarów o strukturze zamkniętej, co w dalszym procesie uniemożliwia zastosowanie filtrowania w oparciu o wymieniony parametr. Dodatkowo potrzeba określić dwa parametry zastosowanej funkcji, pierwszym z nich jest wejściowy wektor macierzy w postaci binarnej natomiast drugim rozmir jądra. W tym momencie należy mieć na uwadze, że czym większy jego wymiar tym krawędzie bardziej zyskają na objętości. Należy jednak dobierać uważnie jago wartość, ponieważ można doprowadzić do sytuacji gdzie kontury zaczną tworzyć jeden większy co nie jest zjawiskiem porządanym. Poniższe równanie opisuje zastosowaną zależność.
+Dilation jest operacją, która ma na celu zwiększenie objętości wyseparowanych krawędzi. W tym przypadku jest to niezbędny proces gdyż zdjęcie jest o stosunkowo niewielkiej rozdzielczości co przekłada się na niewielką powierzchnię krawędzi. Dodatkowo taki proces jest potrzebny, ponieważ kontury uzyskane w wyniku poprzedniej operacji często nie tworzą obszarów o strukturze zamkniętej, co w dalszym procesie uniemożliwia zastosowanie filtrowania w oparciu o wymieniony parametr [@Dilation]. Dodatkowo potrzeba określić dwa parametry zastosowanej funkcji, pierwszym z nich jest wejściowy wektor macierzy w postaci binarnej natomiast drugim rozmir jądra. W tym momencie należy mieć na uwadze, że czym większy jego wymiar tym krawędzie bardziej zyskają na objętości. Należy jednak dobierać uważnie jago wartość, ponieważ można doprowadzić do sytuacji gdzie kontury zaczną tworzyć jeden większy co nie jest zjawiskiem porządanym. Poniższe równanie opisuje zastosowaną zależność.
 
 \begin{equation}
 \operatorname{dst}(x, y)=\max _{\left(x^{\prime}, y^{\prime}\right): \text { element }\left(x^{\prime}, y^{\prime}\right) \neq 0} \operatorname{src}\left(x+x^{\prime}, y+y^{\prime}\right)
 \end{equation}
+
 
 Z praktycznego punktu widzenia oznacza to, że jeżeli przynajmniej jeden element oznaczający wartość *1* z macierzy wejściowej pokryje się z elementem *1* zastosowanego jądra na wyjściu otrzymujemy *1*. Następnie operację powtarzamy przesuwając wektor jądra w taki sposób aby przejść przez całą macierz wyjściową. Modyfikować możemy równieżliczbę iteracji.  
 
@@ -290,7 +288,7 @@ imgDil = cv2.dilate(edges,np.ones((dsize,dsize)),iterations=1)
 
 ### Threshold
 
-Kolejnym etapem jest **Thresholding**, który polega na ustaleniu wartości granicznych dla których zdjęcie powinno zostać wyprogowane. Proces ten można nazwać również binearyzacją. Przetwarzanie polega na aplikacji dla kazdego piksela z obrazu funkcji, która w zależności od wartości koloru piksela ustala jego wartość na 0 (kolor czarny) lub 255 (kolor biały). Należy jednak pamiętać że musimy dysponować obrazem przedstawionym w formacie róznych odcieni szarości, aby proces został przeprowadzony poprawnie. Poniżej interpretacja matematyczna oraz przykład użycia funkcji na której wejście należy podać cztery argumenty. Pierwszym z nich jest macierz obrazu. Kolejne dwa ostalają parametry progrowania. Jeżeli wartość numeryczna piksela będzie większa niż drugi argument, na wyjściu otrzymamy wartość 255 w przeciwnym wypadku będzie to 0. W zależności od zapotrzebowania możemy zastosować różny algorytm, poniższa grafika prezentuje 5 podstawowych, jednak naważniejsze z nich w kontekście projektu to *BINARY* oraz *BINARY_INV*.
+Kolejnym etapem jest **Thresholding**, który polega na ustaleniu wartości granicznych dla których zdjęcie powinno zostać wyprogowane. Proces ten można nazwać również binearyzacją. Przetwarzanie polega na aplikacji dla kazdego piksela z obrazu funkcji, która w zależności od wartości koloru piksela ustala jego wartość na 0 (kolor czarny) lub 255 (kolor biały). Należy jednak pamiętać że musimy dysponować obrazem przedstawionym w formacie róznych odcieni szarości, aby proces został przeprowadzony poprawnie. Poniżej interpretacja matematyczna oraz przykład użycia funkcji na której wejście należy podać cztery argumenty. Pierwszym z nich jest macierz obrazu. Kolejne dwa ostalają parametry progrowania. Jeżeli wartość numeryczna piksela będzie większa niż drugi argument, na wyjściu otrzymamy wartość 255 w przeciwnym wypadku będzie to 0. W zależności od zapotrzebowania możemy zastosować różny algorytm, poniższa grafika prezentuje 5 podstawowych, jednak naważniejsze z nich w kontekście projektu to *BINARY* oraz *BINARY_INV* [@Threshold].
 
 \begin{equation}
 \operatorname{dst}(x, y)= \begin{cases}0 & \text { if } \operatorname{src}(x, y)>\text { thresh } \\ \text { maxval } & \text { otherwise }\end{cases}
@@ -304,13 +302,13 @@ ret,thresh1 = cv2.threshold(imgDil,100,255,cv2.THRESH_BINARY_INV)
 
 ```
 
-![Podstawowe algorytmy progowania](./DATA/Images_to_Thesis/algorytmy_progowania.jpg){width="70%"}
+![Podstawowe algorytmy progowania [@Threshold]](./DATA/Images_to_Thesis/algorytmy_progowania.jpg){width="70%"}
 
 \newpage
 
 ### Wyseparowanie konturów
 
-Kontury można przedstawić w prosty sposób jako krzywą łączącą punkty wzdłuż granicy o takim samym kolorze lub intensywności. Przy ich pomocy można w dość prosty sposób analizować wykrywanie obiektów lub ich rozpoznawanie. W celu zapewnienia najlepszych efektów na wejście algorytmu podaje się najczęsciej zdjęcie w postaci binarnej, co zostało wykonane w poprzednich punktach. Do implementacji służy funkcja *cv2.findContours()* do której zależy dostarczyć trzy argumenty. Pierwszym z nich jest zbinearyzowany obraz, następnie określa się algorytm separacji krawędzi a jako trzecią wartość podaje się metodę aproksymacji. Zastosowany algortym *RETR_CCOMP* charakteryzuje się zwracaniem krawędzi w sposób hierarchiczny tworząc dwa poziomy dla konturów zewnętrznych oraz wewnętrznych. Pierwszą warstwę tworzy obramowanie całego wykrytego elementu. Wszystkie kontury znajdujące się wewnątrz niego stanowią jedną grupę i zostają sklasyfikowane jako drugi stopień drabiny zależności. *CHAIN_APPROX_SIMPLE* służy natomiast do zwrócenia punktów granicznych krawędzi, dla których następuje zmiana w kierunku poziomym, pionowym oraz po przekątnej. Przykładowo dla wykrytego prostokąta byłyby to wyłącznie cztery punkty. Tak wykryte krawędzie są następnie filtrowane za pomocą powierzchni, która jest zdefiniowane przez użytkownika przy pomocy trackbara. Jeżeli zostaną spełnione warunki tj. wykrywany kontrur znajduje się we wnętrzu zewnętrznego oraz jego powierzhnia jest mniejsca od zdefiniowanej wartości granicznej następuje graficzna wizualizacja procesu w oparciu o metodę *cv2.drawContours()*. Następnie wykonywany jest dodatkowy proces, który umożliwi identyfikacje grup obiektów. Do tego celu następuje zaproksymowanie konturu przy pomocy krzywej a następnie wpisanie jest w równanie prostokąta. Mając te dane można wyznaczyć środek ciężkości figury w postaci pojedynczego punktu zawierającego informacje o jego położeniu. Koncowym etapem jest zwrócenie tych wartości w postacji posortowanej listy. Poniższa grafika prezentuje w uproszczony sposób działanie algorytmu. Środki ciężkości zostały przedstawione w postaci czerwonych punktów.
+Kontury można przedstawić w prosty sposób jako krzywą łączącą punkty wzdłuż granicy o takim samym kolorze lub intensywności. Przy ich pomocy można w dość prosty sposób analizować wykrywanie obiektów lub ich rozpoznawanie. W celu zapewnienia najlepszych efektów na wejście algorytmu podaje się najczęsciej zdjęcie w postaci binarnej, co zostało wykonane w poprzednich punktach. Do implementacji służy funkcja *cv2.findContours()* do której zależy dostarczyć trzy argumenty. Pierwszym z nich jest zbinearyzowany obraz, następnie określa się algorytm separacji krawędzi a jako trzecią wartość podaje się metodę aproksymacji. Zastosowany algortym *RETR_CCOMP* charakteryzuje się zwracaniem krawędzi w sposób hierarchiczny tworząc dwa poziomy dla konturów zewnętrznych oraz wewnętrznych. Pierwszą warstwę tworzy obramowanie całego wykrytego elementu. Wszystkie kontury znajdujące się wewnątrz niego stanowią jedną grupę i zostają sklasyfikowane jako drugi stopień drabiny zależności. *CHAIN_APPROX_SIMPLE* służy natomiast do zwrócenia punktów granicznych krawędzi, dla których następuje zmiana w kierunku poziomym, pionowym oraz po przekątnej. Przykładowo dla wykrytego prostokąta byłyby to wyłącznie cztery punkty. Tak wykryte krawędzie są następnie filtrowane za pomocą powierzchni, która jest zdefiniowane przez użytkownika przy pomocy trackbara. Jeżeli zostaną spełnione warunki tj. wykrywany kontrur znajduje się we wnętrzu zewnętrznego oraz jego powierzhnia jest mniejsca od zdefiniowanej wartości granicznej następuje graficzna wizualizacja procesu w oparciu o metodę *cv2.drawContours()* [@Contours]. Następnie wykonywany jest dodatkowy proces, który umożliwi identyfikacje grup obiektów. Do tego celu następuje zaproksymowanie konturu przy pomocy krzywej a następnie wpisanie jest w równanie prostokąta. Mając te dane można wyznaczyć środek ciężkości figury w postaci pojedynczego punktu zawierającego informacje o jego położeniu. Koncowym etapem jest zwrócenie tych wartości w postacji posortowanej listy. Poniższa grafika prezentuje w uproszczony sposób działanie algorytmu. Środki ciężkości zostały przedstawione w postaci czerwonych punktów.
 
 
 ![Wysyperowanie konturów oraz wyznaczenie środków ciężkości](./DATA/Images_to_Thesis/circle_centers.jpg){width="40%"}
@@ -463,7 +461,7 @@ Obecnie każdy nawet o tym nie wiedząc ma codziennie styczność z algorytmami 
 
 ### Budowa neuronu
 
-Początki uczenia głębokiego (*Deep learning*) można datować na lata czterdzieste ubiegłego wieku. Było to możliwe w oparciu o formułę matematycznej implementacji sztuczego neuronu, który z kolei powstał jako inpiracja naturą a w szczególności odkryciu sposobu w jaki nasz mózg przekazuje informacje do reszty organów. Dane w postaci liczbowej reprezentujące wartości wag połączen między poszczególnymi elementami pochodzą z gałęzi zwanych dentrytami, które następnie trafiają do głównego węzła sumującego. W zależności od struktury sieci do układu może zostać dołączone dodatkowe obciążenie (*bias*). W głównej jednostce operacyjnej zwanej również dendrytem następuje wykonanie operacji matematycznej polegającej na wymnożeniu każdej wartości pochodzacej a dendrytu przez jej wagę, zsumowania wszystkich dostarczonych informacji a następnie przepuszczenie ich przez funkcję determinującą wartość na wyjściu (*activation function*). Można wyróżnić trzy podstawowe rodzaje wspomnianych funkcji. Pierwszą z nich jest **RuLU** (*Rectified Linear Unit*), która cechuje sie linową zależnością, gdy wartość wejściowa jest dodatnia, w przciwnym wypadku na wyjściu układu otrzymamy zero. Ze względu na łatwą implementację oraz oraz wysoką wydajność jest one najczęsciej stosowana w praktycznej implementacji. Możemy wyróżnić również funckję w postaci **sigmoid** oraz **tanh**, których matematyczne implementacje oraz kształty zostały przedstawione poniżej.
+Początki uczenia głębokiego (*Deep learning*) można datować na lata czterdzieste ubiegłego wieku. Było to możliwe w oparciu o formułę matematycznej implementacji sztuczego neuronu, który z kolei powstał jako inpiracja naturą a w szczególności odkryciu sposobu w jaki nasz mózg przekazuje informacje do reszty organów. Dane w postaci liczbowej reprezentujące wartości wag połączen między poszczególnymi elementami pochodzą z gałęzi zwanych dentrytami, które następnie trafiają do głównego węzła sumującego. W zależności od struktury sieci do układu może zostać dołączone dodatkowe obciążenie (*bias*). W głównej jednostce operacyjnej zwanej również dendrytem następuje wykonanie operacji matematycznej polegającej na wymnożeniu każdej wartości pochodzacej a dendrytu przez jej wagę, zsumowania wszystkich dostarczonych informacji a następnie przepuszczenie ich przez funkcję determinującą wartość na wyjściu (*activation function*). Można wyróżnić trzy podstawowe rodzaje wspomnianych funkcji. Pierwszą z nich jest **RuLU** (*Rectified Linear Unit*), która cechuje sie linową zależnością, gdy wartość wejściowa jest dodatnia, w przciwnym wypadku na wyjściu układu otrzymamy zero. Ze względu na łatwą implementację oraz oraz wysoką wydajność jest one najczęsciej stosowana w praktycznej implementacji. Możemy wyróżnić również funckję w postaci **sigmoid** oraz **tanh**, których matematyczne implementacje oraz kształty zostały przedstawione poniżej [@Tensorflow_1].
 
 \begin{equation}
 y=\max \left(0, w^{T} x+b\right)
@@ -488,25 +486,164 @@ f(z)=\frac{1}{1+\exp (-z)}
 
 \newpage
 
-![Budowa neuronu inspirowana biologią](./DATA/Images_to_Thesis/biological_neuron.jpg){width="70%"}
+![Budowa neuronu inspirowana biologią [@Tensorflow_1]](./DATA/Images_to_Thesis/biological_neuron.jpg){width="70%"}
 
-![Implementacja neuronu w praktyce](./DATA/Images_to_Thesis/artifical_neuron.jpg){width="70%"}
+![Implementacja neuronu w praktyce [@Tensorflow_1]](./DATA/Images_to_Thesis/artifical_neuron.jpg){width="70%"}
 
-[@Tensorflow_1]
+
 
 \newpage
 
-### Określenie dokładności otrzymanego modelu
+### Określenie dokładności otrzymanego modelu oraz funkcje start
+
+Otrzymując współczynniki modelu z punktu widzenia użytkownika istotnym parametrem jest zdefiniowanie różnicy pomiędzy punktami testowymi a przebiegiem zaproksymowanem w postaci modelu. W tym celu wprowadzone zostały funkcje strat. Najpopularniejszym z nich dla regresji liniowej jest estymator **LS** (*Least Squares*), którego równanie zostało przedstawione poniżej.
+
+\begin{equation}
+J\left(\beta_{0}, \beta_{1}\right)=\sum_{i=0}^{n}\left(y_{i}-\beta_{0}-\beta_{1} x_{i}\right)^{2}
+\end{equation}
+
+Do obliczenia tego parametru potrzebny jest zbiór punktów pomiarowych postacji krotek ($x_i,y_i$), natomiast poszukiwane wartości to $\beta_{0}$ oraz $\beta_{1}$. Dla uzyskania optymalnej postaci modeli punktem wyjściowym jest określenie takiej wartości pary współczynników dla których funkcja strat będzie przyjmować najmniejszą możliwą wartość. Narzędziem, które to umożliwia są obliczenia gradientowe. Z punktu widzenia sieci neuronowej istotną cechą jest **Propagacja wsteczna** (*Backpropagration*), która umożliwia wrócenie układu współczynników do poprzedniego stanu i wykonywanie operacji dopasowywania, aż do momentu uzyskania minimalnej wartości funkcji strat [@gradient]. 
+
+![Wyznaczenie minimum lokalnego w oparciu o obliczenia gradientowe](./DATA/Images_to_Thesis/gradient_descent.jpg){width="100%"}
+
+\newpage
+
+Przedstawiony problem, który jest do rozwiązania przy pomocy sieci neuronowej potrzebuje innego sposobu na klasyfikację poprawności modelu, ponieważ danymi wejściowymi nie są punkty pomiarowe tylko macierze reprezentujące obraz. Nie można zatem mówić o regresji tylko o klasyfikacji a dokładniej o wykrywaniu obiektów. W celu określenia precyzji modelu zostaną wykorzystane zależności w oparciu o poniższą tabelę.
+
+![Ocena poprawności modelu dla wykrywania obiektów](./DATA/Images_to_Thesis/evaluation_table.jpg){width="100%"}
+
+Dwa podstawowe parametry na podstawie powyższej tabeli to *Accuracy* oraz *Recall*. Pierwszy z nich określa w jakich proporcjach wykrywanie obiektów zostało wykonane w sposób poprawny, natomiast *Recall* określa stosunek poprawnych detekcji do sumy przypadków w których wykrywany obiekt znajduje się w przestrzenii roboczej jednak nie został on wykryty oraz przypadków w których detekcja przebiegła pomyślnie. Dla wszystkich przypadków możemy określić również straty modelu w oparciu o informacje z poprzedniego punktu.
+
+$$Accuracy=\frac{TP}{TP+FP}$$
+
+$$Recall=\frac{TP}{TP+FN}$$
 
 
 \newpage
 
 ## Tworzenie sieci neuronowej
 
-### Schemat 
+### Schemat
+
+![Schemat tworzenia sieci neuronowej](./DATA/Images_to_Thesis/ML_schema.jpg){width="80%"}
 
 \newpage
-## Bibliografia
+
+### Pozyskanie danych
+
+W celu automatyzacji gromadzenia danych wejściowych wykorzystanie zostany skrypt w języku Python. Pierwszym krokiem jest zaimportowanie potrzebnych bibliotek oraz określenie nazwy etykiety, która będzie identyfikowana w procesie wykrywania (zmienna *detect*). Niezbędnym parametrem jest również określenie ilości przechwyconych obrazów, którą reprezentuje zmienna *image_batch_size*. Każdy obraz powinien posiadać swój identyfikator co można otrzymac w oparciu o moduł *uuid*. Niezbędne będzie również wykorzystanie wyrażeń regularnych to poszukiwania wzorca tesktowego. Moduł do zarządzania czasem posłuży do uzyskania niezbędnego interwału czasowego pomiędzy kolejnymi przechwyceniami. Wszystkie operacje zostały wykonane na obiekcie statycznym natomiast współrzędne obszaru, w którym znajdują się poszukiwane otwory dobrane zostały w sposób eksperymentalny. Każde zdjęcie powinno posiadać plik zapisany w notacji XML zawierajcy informacje o współrzędnych obiektu, który będzie wykrywany. Skrypt został przystosowany do wielokrotnego użytku co oznacze, że w każdej chwilii możemy powiększyć istniejącą bazę. Kod programu oraz przykładowe zdjęcie z naniesionymi etykietami przedstawione zostały poniżej.
+
+
+![Zdjęcie wraz z etykietą w notacji XML](./DATA/Images_to_Thesis/etykieta.jpg){width="100%"}
+
+\newpage
+
+```python
+import uuid
+import cv2
+import re
+import shutil
+import time
+import os
+
+detect = 'hole'
+image_batch_size = 300
+
+PROJECT_DESTINATION = os.path.join('TensorflowObjectDetectionAPI',
+                                   'mydataset')
+XML_SAMPLE_PATH = os.path.join('TensorflowObjectDetectionAPI',
+                               'sample.xml')
+# Generate UUID list
+generate_uuid_list = [str(uuid.uuid4().int) 
+                      for i in range(image_batch_size)]
+
+# CreateXML file
+for n in range(image_batch_size):
+    destination = os.path.join(PROJECT_DESTINATION,
+          detect+'.'+'{}.xml'.format(generate_uuid_list[n]))
+    shutil.copy(XML_SAMPLE_PATH,destination)
+
+# Check if defined model name exist 
+#(Useful when we collect extra data after first collecting)
+if not os.path.exists(PROJECT_DESTINATION):
+  !mkdir {PROJECT_DESTINATION}
+
+RTSP = os.environ.get('RTSP_ADDRESS')
+cap = cv2.VideoCapture(0)
+
+for n in range(image_batch_size):
+    print(f'Nr. {n}')
+    ret, frame = cap.read()
+    imgname = os.path.join(PROJECT_DESTINATION,
+      detect+'.'+'{}.jpg'.format(generate_uuid_list[n]))
+    cv2.imwrite(imgname, frame[320:370,310:600])
+    cv2.imshow('frame', frame[320:370,310:600])
+    time.sleep(1)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+cap.release()
+cv2.destroyAllWindows()
+```
+
+\newpage
+
+### Wstępne przetworzenie
+
+Model może być wygenerowany prawidłowo tylko i wyłącznie w przypadku gdy dane podczas całego procesu uczenia będą zgeneralizowane co oznacza, że muszą przedstawiać stan obiektu w jak największej liczbie wariantów oraz kombinacji. Wyzwanie polega na tym, że podczas procesu gromadzenia danych, wszystkie zgromadzone informacje różnią się od siebie nieznacznie co może powodować możliwość wystąpienia zjawiska opisywanego w literaturze jako *overfitting*. Oznacza to, że model może być dobrze dopasowany do danych na których bazował podczas nauki, jednak w przypadku gdy na jego podejscie zostanie podany obraz w nieco innym oświetleniu lub orientacji otrzymany wynik będzie znacząco różny od oczekiwanego. W celu uniknięcia opisanego zjawiska stosuje się zabieg znany jako *Data Augmentation* polegający na sztucznym zwiększeniu dostępnych informacji poprzez dodatkowe operacje wykonywane na obrazie. Szeroki pakiet rozwiązań w tym zakresie oferuje platforma Roboflow, która w darmowej wersji posiada ograniczenie do trzykrotnego zwiększenia dostępnych informacji oraz posiada górny limit w postacji obługi maksymalnie tysiąca obrazów co jest wystarczające do otrzymania modelu, który będzie wykrywał obiekty w sposób poprawny. W ramach darmowej licencji możemy wykonywać operacje takie jak: zmienianie poziomu nasycenia kolorów, translacje obrazu o wektor, dodanie ziarnistości, zmiana ekspozycji świetlnej. Poniżej widnieje okno z operacjami wykonanymi dla dostarczonych zdjęć wraz z anotacjami w postaci plików XML.
+
+[@roboflow]
+
+![Data Augmentation w oparciu o platformę Roboflow](./DATA/Images_to_Thesis/roboflow_aug.jpg){width="70%"}
+
+\newpage
+
+Dodatkową zaletą wykorzystanej platformy jest możliwość eksportowania danych z wykorzystaniem pakieru *curl* do postaci w formacie *TFRecords*, który jest podstawową jednostką nośną informacji przy wykorzystaniu zarówno biblioteki TensorFlow jak i TensorFlow Object Detection API. Gotowe pliki zawierają wszystkie potrzebne infromacje do odtworzenia zarówno wykrywanych obiektów jak i ich etykiet.
+
+![Eksportowanie danych z platformy Roboflow](./DATA/Images_to_Thesis/data_export_roboflow.jpg){width="70%"}
+
+Dodatkowym wyzwaniem jest konieczność wykrywania otworów, które na zdjęciu można wpisać w prostokąt o bokach 10x10 pikseli. Identyfikacja niewielkich elementów jest szeroko znanym problemem występującym między innymi podczas analizowania zdjęć satelitarnych czy podczas wykrywania osób w tłumie. Przez ostatnie lata zostało powstało kilka sposób, które w znaczy sposób mogą poprawić rezultat działania programu. Najprostszą czynnością jaką można wykonać jest zwiększenie rozdzielczości kamery, która przechwytuje obraz. To rowiązanie niesie jednak za sobą poważne kosekwencje w postacji możliwych opóźnień w relacji program-kamera spowodowanych niewystarczającą przepustowością łącza. Parametr rozdzielczości został dobrany na samym początku i nie ma możliwości jego zwiększenia bez negatywnego wpływu na kolejne etapy przetwarzania. Innym sposobem na rozwiązanie takiego problemu jest podzielenie zdjęcia na mniejsze mniejsze fragmenty oraz analizowanie ich osobno po czym na końcu należy złączyć wszystkie informacje w całość. Poniżej przedstawiona zostaje idea pomysłu [@small_objects].
+
+\newpage
+
+![Wykrywanie niewielkich elementów metodą dzielenia obrazu](./DATA/Images_to_Thesis/small_objects.jpg){width="100%"}
+
+Wykonanie takiej operacji jest jednak dość skomplikowane pod względem implementacyjnym, ponieważ dla poszczególnych fragmentów układu powstają nowe układy współrzędnych, dla których wartości etykiet nie pokrywają się z obszarami zdefiniowanymi w plikach XML. Można jednak wyciąganąć wniosek z takiego podejścia, że maksymalne ograniczenie obszaru powoduje procentowy wzrost udziału powierzchni, która podlegać będzie wykryciu co z kolei podnosi skuteczność stosowanych algorytmów. Wiedza wstępna o obiekcie pozwala jednak stwterdzić, że wykrywane elementy znajdują się w niewielkiej odległości od siebie, wieć należy wyłącznie maksymalnie ograniczyć obszar wykrywania. Biorąć pod uwagę przytoczone właściwości, fragment kodu odpowiadający za przetrzenie obrazu z kamery (sekcja z OpenCV) został dobrany w taki sposób aby maksymalnie ograniczać przestrzeń pracy. Do sieci neuronowej zwracane są zaten wyłącznie wyseparowane fragmenty zawierące najważniejsze elementy.
+
+\newpage
+
+### Wybór modelu bazowego w oparciu o framework TenrorFlow Object Detection API
+
+![Tensorflow Object Detection API](./DATA/Images_to_Thesis/tensorflow_object_detection_api.jpg){width="100%"}
+
+**TensorFlow Object Detection API** jest biblioteką działającą w oparciu o framework *TensorFlow*, która umożliwia tworzenie, trenowanie oraz wystawianie modeli do fazy produkcyjnej w oparciu o wykrywanie oraz identyfikację wielu obiektów z pojedyńczego zdjęcia. Wykrywane elementy mogą być zdefiniowane różnych kategoriach. Pakiet umożliwia pełną współpracę z bibliotekami typu *Computer Vision* (w tym *OpenCV*). Użytkownik otrzymuje dostęp do zaimplementowanych algorytmów (*SSD*, *Faster R-CNN*), które wystarczy jedynie przetrenować dla własnych danych otrzymując w ten sposób wagi połączeń między neuronami dla zdefiniowanego problemu. Głównym aspektem przy wyborze odpowiedniego modelu jest kompromis między wydajnością a dokładnością. W przypadku gdy chcemy wykrywać obiekty w czasie rzeczywistym w oparciu o sprzęt z niskimi parametrami należy pogodzić się z faktem, że prezycja może znacząco odbiegać od wartości oczekiwanej. Programista określając strukturę sieci powinien posiadać informację na jakim sprzęcie aplikacja będzie wykonywana co pozwoli na znalezienie odpowiedniego kompromisu w relacji wydajność-dokładność.
+
+\newpage
+
+### Budowa modelu
+
+Ze względu na ograniczenia sprzętowe operacja trenowania modelu wykonana została w oparciu o środowisko *Colab*, które jest chmurowym odpowiednikiem oprogramowania *Jupyter*. Aplikacja umożliwia bezpośrednie połączenie z dyskiem oferowanym przez firmę Google, co przy odpowiedniej konfiguracji umożliwia automatyczną synchronizację z plikami znajdującymi się lokalnie na komputerze. Należy jednak mieć na uwadze, że wszystkie operacje zarządzania plikami są wykonywane w oparciu o serwer chmurowy co skutkuje koniecznością zastosowania poleceń zgodnych z formatem systemu Linux. Po odpowiedniej konfiguracji oraz zainstalowaniu wszystkich potrzebnych bibliotek. Funkcje oraz klasy stosowane podczas całego procesu wykorzystane zostały w oparciu o materiały dostarczone przez producenta [@tensorflow_api].
+
+### Ocena modelu
+
+**TensorBoard** jest interaktywną nakładką działającą w oparciu o bibliotekę TensorFlow. Umożliwia uzytkownikom śledzenie na bieżąco parametrów takich jak funkcje strat, dokładność badanego modelu. Dla problemu klasyfikacji oraz wykrywania narzędzie wybiera losowo wybrane zdjęcia z częsci testowej oraz prezentuje aktualne rezultaty otrzymywane przez program. W oparciu o dodatkowe funkcjonalności możemy projektować sieć zmieniając liczbę warstw oraz obserowować zmiany na bieżąco w przyjazny dla użytkownika sposób graficzny. Istnieje również możliwość testowania algorytmów polegających na klasteryzacji poszczególnych danych grupując je odpowiednio w grupy bazując na algorytmach, które możemy modyfikować równolegle do wykonywania programu. Platforma umożliwia eksplorację danych różnego rodzaju wliczając w to dane tekstowe, obrazy czy nawet pliki dźwiękowe [@tensor_board]. Poniżej zaprezentowane zostały zrzuty ekranu z podsumowania wygenerowane w oparciu o *TensorBoard*.
+
+\newpage
+
+![Ocena modelu w postaci liczbowej](./DATA/Images_to_Thesis/training.jpg){width="100%"}
+![Ocena modelu w postaci graficznej](./DATA/Images_to_Thesis/training_graph.jpg){width="100%"}
+
+\newpage
+Ocena poprawności wykonanego modelu została wykonana w oparciu o proces dwuetapowy. W pierwszej częsci zostały przedstawione wartości w postaci numerycznej uzyskane podczas procesu uczenia. Wartość iteracji wynosi ponad 50 tysięcy i została ona wybrana w sposób ekperymentalny poprzez ostawienie dużej wartości wykonywanych pętli a jednoczenie zwracanie odpowiedzi układu co określoną liczbę iteracji. W tym celu wykorzystany również został parametr postępu modelu (*learning rate*) określający progres jaki został uczyniony od czasu ostatniej wykonywanej oceny. Jeżeli wartość ta będzie już niewielka można zatrzymać wykonywaną symulacje oraz wyekportować otrzymany model. Na podstawie otrymanych grafik można stwierdzić, że największa dynamika występuje podczas pierwszych 20 tysięcy iteracji, natomiast potem model uczy się już wolniej. Ważniejszym aspektem jest jednak ocena w oparciu o praktyczne wykrywanie obiektów co zostało przedstawione powyżej. Kolorem czerownym zostały zaznaczone elementy, które zostały dostarczone do procesu uczenia. Zielona obwiednia oznacza wykryte elementy z bazy testowej, która nie miała dostępu do sieci w trakcie uczenia co pozwoliło zachować generalizacje modelu. Zgodnie z załączonymi grafikami wszystkie elementy zostały wykryte w sposób poprawny co oznacza, że sieć została poprawnie skonfiguwowana oraz odpowiednio reaguje na dane, które wcześniej nie były dostarczone na jej wejście.
+
+\newpage
+
+# Możliwości dalszego rozwoju aplikacji
+
+Obecnie aplikacja jest w pełni funkcjonalna wyłącznie w postaci desktopowej przy konieczności wcześniejszego instalowania wszystkich potrzebnych bibliotek oraz plików od nich zależnych. W sytacji, gdy program byłby wykonywany tylko i wyłącznie na jednym komputerze taka sytuacja byłaby w pełni akceptowalna. Jednak w przyszłości może się okazać, że różne oddziały firmy będą potrzebować tego samego oprogramowania co może być kłopotliwe jeżeli zaszłaby jakaś zmiana lub aktualizacja. Kluczem do rozwiązania problemu może okazać się aplikacja w postaci przeglądarkowej, gdzie użytkownik będzie wyłącznie personalizował adres wejścia protokołu RTSP dla odpowiednio skonfigurowanej kamery. Kolejną niedogodnością, która powinna zostać rozwiązania jest czas wykonywania analizy pojedyńczej klatki. Na aktualnym etapie problem jest rozwiązywany poprzez wykorzystywanie wydajnej karty graficznej co jednak znacząco zwiększa koszty eksploatacji. Wykorzystanie mniej dokładnego modelu nie daje zadowalających rezultatów co jest obiektem stanowiącym podstawę do dalszego optymalizowania układu. Domyślnie po rozwiązaniu wspomnianych utrudnień aplikacja będzie składać się z dwóch części: wartwy graficznej (*front end*) oraz logicznej (*back end*). Pierwsza z nich zbudowana zostanie w oparciu o framework *React*. Wartstwa zarządzająca częścią logiczną będzie jednak dużo większym wyzwaniem, ponieważ bedzie musiała łączyć ze sobą wiele dodatkowych bibliotek i wzrócić odpowiedź układu w postaci pliku JSON jako API, który będzie wizualizowany w oparciu o język Javascript. Pracę z wystawieniem modeli w proces produkcyjny ułatwia narzędzie *Tensorflow Servings*, które wymaga jednak znajomości takich narzędzi *Kuternates* oraz obsługę *Google Cloud Platform*. Aplikacja pobiera plik zdjęciowy a następnie wzraca odpowiedź w postacji JSON z wykrytymy elementami oraz wartościami procentowymi określającymi pradwopodobieństwo wykrytych obiektów. Jako środowisko obsługujące dodatkowe rozwiązania zastosowany zostanie framework *Django* oraz *Django REST* który umożliwia łącznie baz danych z zewnętrznymi API w oparciu o język Python. 
+
+\newpage
+
+# Bibliografia
 
 
 
